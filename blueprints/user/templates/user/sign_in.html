@@ -154,7 +154,7 @@
           <div class="card card-signin my-5">
             <div class="card-body">
               <h5 class="card-title text-center">Sign In</h5>
-              <form class="form-signin needs-validation" method="post" action="" novalidate>
+              <form class="form-signin needs-validation" method="post" action="{{ url_for('user_bp.sign_in_fun') }}" novalidate>
                 <div class="form-label-group">
                   <input type="email" id="inputEmail" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="25" name="email" class="form-control" placeholder="Email address" required autofocus>
                   <div style="margin-left:10px;" class="invalid-feedback">

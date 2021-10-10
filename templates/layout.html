@@ -29,6 +29,16 @@
 
 </head>
 <body>
+	{% with messages = get_flashed_messages(with_categories=True) %}
+		{% if messages %}
+			{% for category,message in messages %}
+				<div style="margin:10px;" class="alert alert-{{category}}">
+					{{message}}
+				</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith %}
+
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 	  <a class="navbar-brand" href="#">
 		  <img style="margin-left:20px;" src="{{ url_for('static',filename='images/festival-logo.png') }}" height="55" />
@@ -42,32 +52,43 @@
 	      		<a class="nav-item nav-link" href="https://www.uciacasatrnava.sk/">Festival</a>
 	        </li>
 		  	{% if current_user.is_authenticated %}
-
-		  		<li class="links-items nav-item">
-	      			<a class="nav-link" href="https://www.uciacasatrnava.sk/">Festival</a>
-	        	</li>
-	      		<li class="links-items nav-item">
-	      			<a class="nav-link" href="https://www.uciacasatrnava.sk/">Festival</a>
-	        	</li>
-	      		<li class="links-items nav-item">
-	      			<a class="nav-link" href="https://www.uciacasatrnava.sk/">Festival</a>
-	        	</li>
-
+				{% if "permit" in session %}
+			  		<li class="links-items nav-item">
+	      				<a class="nav-link" href="#">Kontrola lístkov</a>
+	        		</li>
+			  		<li class="links-items nav-item">
+						<a class="nav-link" href="#">Registrácia</a>
+	        		</li>
+			  		{% if session["permit"] == 1 %}
+						<li class="links-items nav-item">
+							<a class="nav-link" href="#">Štatistiky</a>
+	        			</li>
+			  			<li class="links-items nav-item">
+							<a class="nav-link" href="#">Operácie</a>
+	        			</li>
+			  		{% endif %}
+			  	{% else %}
+			  		<li class="links-items nav-item">
+	      				<a class="nav-link" href="#">Tvoje Konto</a>
+	        		</li>
+			    {% endif %}
 		  	{% endif %}
 		  </ul>
 
 		  {% if current_user.is_authenticated %}
-            <a class="btn btn-secondary" style="margin-right:30px;" id="sign_out" href="">Odhlásiť sa</a>
+            <a class="btn btn-secondary" style="margin-right:30px;" id="sign_out" href="{{ url_for('user_bp.sign_out') }}">Odhlásiť sa</a>
           {% else %}
-            <a class="btn btn-success" style="margin-right:30px;" id="sign_in" href="{{ url_for('') }}">Prihlásiť sa</a>
+            <a class="btn btn-success" style="margin-right:30px;" id="sign_in" href="{{ url_for('user_bp.sign_in_view') }}">Prihlásiť sa</a>
           {% endif %}
 		  <i class="bi bi-github"></i>
 
 	  </div>
 	</nav>
 
-    {% block content %}
-    {% endblock content %}
+	<main class="content">
+    	{% block content %}
+    	{% endblock content %}
+	</main>
     <footer class="footer" style="margin-top:150px;">
 	      <div id="footer-lop" >
 	      <!-- Footer Links -->
@@ -77,7 +98,7 @@
 	          <!-- Grid column -->
 	          <div class="col-md-2 mb-3">
 	            <h6 class="text-uppercase font-weight-bold">
-	              <a target="_blank" href="https://gma.edupage.org/">O nás</a>
+	              <a target="_blank" href="https://www.uciacasatrnava.sk/domov/">O nás</a>
 	            </h6>
 	          </div>
 	          <!-- Grid column -->
@@ -108,7 +129,7 @@
 	    	  </div>
 	      <!-- Copyright -->
 	    	  <div style="text-align: center;color:#525252;">
-	    	  	<label >&copy; Live Starter</label>
+	    	  	<label >&copy; Lifestarter</label>
 	    	  </div>
 	      </div>
 	      <!-- Copyright -->

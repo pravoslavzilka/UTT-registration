@@ -3,9 +3,9 @@ from blueprints.admin.__init__ import admin_bp
 from blueprints.head_admin.__init__ import h_admin_bp
 from blueprints.user.__init__ import user_bp
 from database import db_session
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_wtf.csrf import CSRFProtect
-from models import User
+from models import User, Admin
 import os
 
 
@@ -36,8 +36,8 @@ app.jinja_env.autoescape = True | False
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "user_bp.sign_in_page"
-login_manager.login_message = "Please sign in to access this page"
+login_manager.login_view = "user_bp.sign_in_view"
+login_manager.login_message = "Musíte sa prihlásiť"
 login_manager.login_message_category = "info"
 login_manager.session_protection = "strong"
 
@@ -59,7 +59,7 @@ def shutdown_session(exception=None):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.filter(User.id == user_id).first()
+    return User.query.filter(User.id == user_id).first() or Admin.query.filter(Admin.id == user_id).first()
 
 
 if __name__ == "__main__":
