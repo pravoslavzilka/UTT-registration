@@ -47,3 +47,8 @@ def sign_out():
         session.pop("permit")
     flash("Bol si odhlásený","success")
     return redirect(url_for("main_page"))
+
+
+@user_bp.route("/sign-up/", methods=['GET'])
+def sign_up_view():
+    return render_template("user/sign_up.html")

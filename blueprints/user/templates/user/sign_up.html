@@ -1,0 +1,154 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Zaregistrujte sa na festival UTT
+{% endblock title %}
+
+
+{% block content %}
+
+<style>
+
+.card-registration .select-input.form-control[readonly]:not([disabled]) {
+  font-size: 1rem;
+  line-height: 2.15;
+  padding-left: .60em;
+  padding-right: .60em;
+}
+.card-registration .select-arrow {
+  top: 13px;
+}
+</style>
+
+<section class="vh-100 gradient-custom">
+  <div class="container py-5 h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-12 col-lg-10 col-xl-10">
+        <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+          <div class="card-body p-4 p-md-5">
+            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Registrácia na Festival Učiaca sa Trnava</h3>
+            <form class="needs-validation" novalidate>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputName">Meno</label>
+                  <input type="text" class="form-control" id="inputName" placeholder="Meno" required>
+                  <div class="invalid-feedback">
+                    Zadaj platné meno
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="inputAge">Vek</label>
+                  <input type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="3" class="form-control" id="inputAge"  placeholder="Vek" required>
+                    <div class="invalid-feedback">
+                        Zadaj platné vek
+                      </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputEmail4">Email</label>
+                  <input type="email" class="form-control" id="inputEmail4" placeholder="Email" required>
+                   <div class="invalid-feedback">
+                    Zadaj platný email
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="inputPassword4">Vytvor si heslo</label>
+                  <input type="password" class="form-control" id="inputPassword4" placeholder="Heslo" required>
+                  <div class="invalid-feedback">
+                    Vytvor si 8 miestne heslo
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group col-md-6">
+                      <label for="inputLoc">Miesto Bydliska</label>
+                      <input type="text" class="form-control" id="inputLoc" placeholder="Miesto" required>
+                       <div class="invalid-feedback">
+                        Zadaj platný miesto bydliska
+                      </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label for="inputPer">Kto si</label>
+                      <select class="form-control" id="inputPer" required>
+                        <option>Žiak ZŠ</option>
+                        <option>Študent SŠ</option>
+                        <option>Študent VŠ</option>
+                        <option>Pracujúci</option>
+                        <option>Učiteľ</option>
+                        <option>Matka na materskej dovolenke</option>
+                        <option>Dôchodca</option>
+                        <option>Iné</option>
+                      </select>
+                  </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="inputAddress">Address</label>
+                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+              </div>
+              <div class="form-group">
+                <label for="inputAddress2">Address 2</label>
+                <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputCity">City</label>
+                  <input type="text" class="form-control" id="inputCity">
+                </div>
+                <div class="form-group col-md-4">
+                  <label for="inputState">State</label>
+                  <select class="form-control" id="person-form" required>
+                    <option>Žiak ZŠ</option>
+                    <option>Študent SŠ</option>
+                    <option>Študent VŠ</option>
+                    <option>Pracujúci</option>
+                    <option>Učiteľ</option>
+                    <option>Matka na materskej dovolenke</option>
+                    <option>Dôchodca</option>
+                    <option>Iné</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-2">
+                  <label for="inputZip">Zip</label>
+                  <input type="text" class="form-control" id="inputZip">
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="gridCheck">
+                  <label class="form-check-label" for="gridCheck">
+                    Súhlasím so spracovaním údajov
+                  </label>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Sign in</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+</script>
+
+{% endblock content %}

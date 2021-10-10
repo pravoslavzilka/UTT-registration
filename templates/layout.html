@@ -78,6 +78,7 @@
 		  {% if current_user.is_authenticated %}
             <a class="btn btn-secondary" style="margin-right:30px;" id="sign_out" href="{{ url_for('user_bp.sign_out') }}">Odhlásiť sa</a>
           {% else %}
+		  	<a type="button" style="margin-right:10px;" class="btn btn-outline-info" href="{{ url_for('user_bp.sign_up_view') }}">Registrovať sa</a>
             <a class="btn btn-success" style="margin-right:30px;" id="sign_in" href="{{ url_for('user_bp.sign_in_view') }}">Prihlásiť sa</a>
           {% endif %}
 		  <i class="bi bi-github"></i>
