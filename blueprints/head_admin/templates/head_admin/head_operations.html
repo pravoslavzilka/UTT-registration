@@ -1,0 +1,134 @@
+{% extends "layout.html"%}
+
+{% block title %}
+    Admin operácie
+{% endblock title%}
+
+{% block head %}
+{% endblock head %}
+
+
+{% block content %}
+
+    <script>
+		$(document).ready(function(){
+  		 	$(".active").removeClass("active");
+  		 	$("#operations").addClass("active");
+		});
+	</script>
+
+    <style>
+        .new-piece {
+            max-width:400px;
+            margin-left:-13px;
+            margin-right:-13px;
+        }
+
+        @media only screen and (max-width: 900px) {
+            .new-piece {
+               max-width:1000px;
+            }
+        }
+    </style>
+
+    <div class="row py-5 px-4">
+        <div class="col-md-10 col-lg-8 mx-auto">
+            <!-- Profile widget -->
+            <div class="bg-white shadow rounded overflow-hidden">
+
+                <div class="bg-light p-4 d-flex justify-content-end text-center">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item">
+                            <h5 class="font-weight-bold mb-0 d-block">215</h5><small class="text-muted"> <i class="fas fa-image mr-1"></i>Účastníkov</small>
+                        </li>
+                        <li class="list-inline-item">
+                            <h5 class="font-weight-bold mb-0 d-block">745</h5><small class="text-muted"> <i class="fas fa-user mr-1"></i>Voľných</small>
+                        </li>
+                        <li class="list-inline-item">
+                            <h5 class="font-weight-bold mb-0 d-block">340</h5><small class="text-muted"> <i class="fas fa-user mr-1"></i>Začiatok</small>
+                        </li>
+                    </ul>
+                </div>
+                {% for ttt in ttts %}
+                    <div class="px-4 py-3">
+                        <h4 style="padding-bottom:10px;">{{ ttt.name }}</h4>
+                        <div class="container">
+                            {% for tt in ttt.ticket_types %}
+                                <div class="row">
+                                    <div class="col-md-10 col-lg-12 mx-auto card" style="margin-bottom:10px;">
+                                      <div class="card-body">
+                                          <div id="main_place{{tt.id}}">
+                                              <strong style="margin-left:-10px;">{{ tt.name }}</strong>
+                                              <label> | {{ tt.speaker }}</label>
+                                              <label> | {{ tt.start }}</label>
+                                              <label> | {{ tt.tickets | length }}/{{ tt.max_cap }}</label>
+
+                                              <a style="color:white;" class="btn btn-sm btn-danger float-right" href="{{url_for('h_admin_bp.delete_piece',piece_id=tt.id)}}">Del</a>
+                                              <button onclick="show('operation1{{tt.id}}','main_place{{tt.id}}')" style="margin-right:5px;color:white;" class="btn btn-sm btn-info float-right">Upraviť</button>
+                                          </div>
+                                          <div id="operation1{{tt.id}}" style="display:none">
+                                                <form class="form-inline" method="post" action="{{ url_for('h_admin_bp.edit_piece') }}">
+                                                  <input name="piece-name" type="text" class="form-control mb-1 mr-sm-1" value="{{ tt.name }}" placeholder="Názov" required>
+                                                  <input name="piece-speaker" type="text" class="form-control mb-1 mr-sm-1" value="{{ tt.speaker }}" placeholder="Speaker" required>
+                                                  <input name="piece-start" type="time" class="form-control mb-1 mr-sm-1" value="{{ tt.start }}"  required>
+                                                  <input name="piece-cap" type="number" style="max-width:105px;" class="form-control mb-1 mr-sm-1" value="{{ tt.max_cap }}"  placeholder="Max cap" required>
+                                                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                  <input type="hidden" name="piece-id" value="{{ tt.id }}"/>
+                                                  <div class="form-check mb-2 mr-sm-2">
+                                                    <button onclick="show('operation2{{tt.id}}','main_place{{tt.id}}')" style="margin-right:5px;color:white;" class="btn btn-sm btn-secondary">Zrušiť</button>
+                                                    <button type="submit" style="color:white;" class="btn btn-sm btn-success">Zmeniť</button>
+                                                  </div>
+
+
+                                                </form>
+                                          </div>
+                                          <div id="operation2{{tt.id}}" style="display:none">
+                                              <strong style="margin-left:-10px;">{{ tt.name }}</strong>
+                                              <label>- {{ tt.speaker }}</label>
+                                              <label>- {{ tt.start }}</label>
+                                              <label>- {{ tt.tickets | length }}/{{ tt.max_cap }}</label>
+
+                                              <a style="color:white;" class="btn btn-sm btn-danger float-right" href="{{url_for('h_admin_bp.delete_piece',piece_id=tt.id)}}">Del</a>
+                                              <button onclick="show('operation1{{tt.id}}','main_place{{tt.id}}')" style="margin-right:5px;color:white;" class="btn btn-sm btn-info float-right">Upraviť</button>
+                                          </div>
+                                      </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div style="margin-top:20px;" class="row">
+                                <div class="collapse col-12 new-piece" id="new-piece{{ttt.id}}">
+                                  <div class="card card-body">
+                                    <strong class="" style="padding-bottom:5px;font-size: 18px;">Nová učebnica</strong>
+                                    <form class="needs-validation" action="{{ url_for('h_admin_bp.add_piece') }}" method="post" style="margin-top:10px;">
+                                      <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="piece-name"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Názov" required>
+                                      <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="piece-speaker"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Speaker" required>
+                                      <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="3" name="piece-cap"  type="number" class="form-control mb-2 mr-sm-2" placeholder="Max. počet" required>
+                                      <div class="row">
+                                          <label class="col-2" style="font-size:18px;font-style:bold;padding-top:5px;margin-left:5px;"><strong>Čas</strong></label>
+                                        <input name="piece-start" style="max-width:90px;"  type="time" class="form-control col-6 mb-2 mr-sm-2" required>
+                                      </div>
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <input type="hidden" name="piece-ttt" value="{{ ttt.id }}"/>
+                                      <button type="submit" class="btn btn-success float-right">Pridať</button>
+                                    </form>
+                                  </div>
+                                </div>
+                           </div>
+                            <div class="row">
+                                <div style="padding-top:10px;">
+                                    <a href="#" id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-piece{{ttt.id}}" aria-expanded="false" aria-controls="new-piece{{ttt.id}}">Pridať</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+         function show(param_div_id, main_div) {
+          document.getElementById(main_div).innerHTML = document.getElementById(param_div_id).innerHTML;
+        }
+    </script>
+{% endblock content %}
