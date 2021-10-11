@@ -35,12 +35,16 @@ def add_piece():
 def edit_piece():
     name = request.form["piece-name"]
     speaker = request.form["piece-speaker"]
-    start = datetime.datetime.strptime(request.form["piece-start"], '%H:%M:%S').time()
+    start = request.form["piece-start"]
     max_cap = int(request.form["piece-cap"])
     tt = TicketType.query.filter(TicketType.id == int(request.form["piece-id"])).first()
 
     tt.name = name
     tt.speaker = speaker
+    if len(start)>5:
+        start = datetime.datetime.strptime(start, '%H:%M:%S').time()
+    else:
+        start = datetime.datetime.strptime(start, '%H:%M').time()
     tt.start = start
     tt.max_cap = max_cap
 

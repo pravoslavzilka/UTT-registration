@@ -45,9 +45,14 @@ class User(Base):
     name = Column(String(100))
     email = Column(String(150), unique=True)
     password = Column(String(128))
-    code = Column(Integer, unique=True)
+    code = Column(String(128))
     confirm = Column(Boolean)
-    qr_code = Column(LargeBinary)
+    age = Column(Integer)
+    city = Column(String(100))
+    otp = Column(String(100))
+    who = Column(String(100))
+    where = Column(String(100))
+    news = Column(Boolean)
 
     tickets = relationship("Ticket", back_populates="user", foreign_keys="[Ticket.user_id]")
 

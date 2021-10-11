@@ -1,0 +1,57 @@
+{% extends "layout.html"%}
+
+{% block title %}
+    Tvoje Konto
+{% endblock title%}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+{% endblock head %}
+
+
+{% block content %}
+    <style>
+        #qrcode {
+          width: 160px;
+          height: 160px;
+          margin-top: 15px;
+        }
+       
+    </style>
+
+    <input id="text" type="hidden" value="{{ user.code }}" style="width:80%" /><br />
+    <div id="qrcode"></div>
+
+
+    <a id='qrdl' hidden >Download</a>
+
+
+
+    <script>
+        const makeQR = (url, filename) => {
+          var qrcode = new QRCode("qrcode", {
+            text: "http://jindo.dev.naver.com/collie",
+            width: 128,
+            height: 128,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+          qrcode.makeCode(url);
+
+          setTimeout(() => {
+            let qelem = document.querySelector('#qrcode img')
+            let dlink = document.querySelector('#qrdl')
+            let qr = qelem.getAttribute('src');
+            dlink.setAttribute('href', qr);
+            dlink.setAttribute('download', 'qrcode_ticket');
+            dlink.removeAttribute('hidden');
+          }, 500);
+        }
+
+        makeQR(document.querySelector('#text').value, 'qr-code.png')
+
+        document.querySelectorAll("#grcode img")
+
+    </script>
+{% endblock content %}
