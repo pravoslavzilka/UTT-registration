@@ -84,9 +84,9 @@
                                           </div>
                                           <div id="operation2{{tt.id}}" style="display:none">
                                               <strong style="margin-left:-10px;">{{ tt.name }}</strong>
-                                              <label>- {{ tt.speaker }}</label>
-                                              <label>- {{ tt.start }}</label>
-                                              <label>- {{ tt.tickets | length }}/{{ tt.max_cap }}</label>
+                                              <label> | {{ tt.speaker }}</label>
+                                              <label> | {{ tt.start }}</label>
+                                              <label> | {{ tt.tickets | length }}/{{ tt.max_cap }}</label>
 
                                               <a style="color:white;" class="btn btn-sm btn-danger float-right" href="{{url_for('h_admin_bp.delete_piece',piece_id=tt.id)}}">Del</a>
                                               <button onclick="show('operation1{{tt.id}}','main_place{{tt.id}}')" style="margin-right:5px;color:white;" class="btn btn-sm btn-info float-right">Upraviť</button>
@@ -95,10 +95,10 @@
                                     </div>
                                 </div>
                             {% endfor %}
-                            <div style="margin-top:20px;" class="row">
+                            <div class="row">
                                 <div class="collapse col-12 new-piece" id="new-piece{{ttt.id}}">
                                   <div class="card card-body">
-                                    <strong class="" style="padding-bottom:5px;font-size: 18px;">Nová učebnica</strong>
+                                    <strong class="" style="padding-bottom:5px;font-size: 18px;">Nový {{ ttt.name }}</strong>
                                     <form class="needs-validation" action="{{ url_for('h_admin_bp.add_piece') }}" method="post" style="margin-top:10px;">
                                       <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="piece-name"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Názov" required>
                                       <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="piece-speaker"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Speaker" required>

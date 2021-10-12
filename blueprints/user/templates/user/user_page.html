@@ -12,27 +12,157 @@
 {% block content %}
     <style>
         #qrcode {
-          width: 160px;
-          height: 160px;
+          width: 250px;
+          height: 250px;
           margin-top: 15px;
         }
-       
+
+        @media only screen and (max-width: 750px) {
+            .user-card {
+              margin:10px;
+              //margin-top:-90px;
+            }
+            .user-tickets {
+                margin-top:60px;
+            }
+            .card-button-user {
+                margin-right:20px;
+            }
+          }
+
     </style>
 
     <input id="text" type="hidden" value="{{ user.code }}" style="width:80%" /><br />
-    <div id="qrcode"></div>
 
 
-    <a id='qrdl' hidden >Download</a>
+        <div class="container" style="">
+        <div class="row">
+            <div class="card user-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:165px;">
+              <div class="card-body">
+                <div id="main_place">
+                    <h3 class="card-title">{{ user.name }}</h3>
+                    <div>
+                        <strong>Email:</strong>
+                        {{ user.email }}
+                    </div>
+                    <div>
+                        <strong>Mesto:</strong>
+                        {{ user.city }}
+                    </div>
+                    <div style="padding-top:10px;">
+                        <a href="#">Upraviť profil</a>
+                    </div>
+
+                </div>
+              </div>
+              <div style="margin-top:10px;" class="d-flex justify-content-center">
+                    <button id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" data-toggle="modal" data-target="#showQRCode">
+	                   Zobraziť QR kód
+	                </button>
+                        <a id='qrdl' type="button" style="margin-left:5px;" class="btn btn-info utilities-buttons" hidden>
+                          Stiahnúť QR kód
+                        </a>
+               </div>
 
 
+            </div>
+            <div id="book-list" style="" class="user-tickets col-md-8 col-lg-8 col-sm-12 col-xs-12">
+                <div  id="book-list2">
+                </div>
+                <h4 style="padding-bottom:20px;padding-top:20px;" class="text-strong"><strong>Tvoj Program:</strong></h4>
+                <div>
+                    {% for ttt in ttts %}
+                        <h5 style="margin-top:10px;" class="text-muted">{{ ttt.name }}:</h5>
+                        {% for ticket in user.tickets %}
+                            {% if ticket.ticket_type.ticket_type_type == ttt %}
+
+                                <div class="card">
+                                  <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-2 d-none d-md-block">
+                                            <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
+                                        </div>
+                                        <div class="col-8">
+                                            <strong style="font-size:19px;">{{ ticket.ticket_type.name }}</strong>
+                                            <div style="margin-top:5px;">
+                                                <strong class="text-muted">Speaker:</strong> {{ ticket.ticket_type.speaker }}
+                                            </div>
+                                            <div>
+                                                <strong class="text-muted">Začiatok:</strong> {{ ticket.ticket_type.start }}
+                                            </div>
+                                        </div>
+                                        <div class="col-2 card-button-user" style="padding-top:;">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button type="button" class="btn btn-secondary">Zmeniť</button>
+                                                    <button type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            {% else %}
+                                <div class="row">
+                                    <div class="collapse col-12 new-piece" id="new-piece{{ ttt.id }}">
+                                      <div class="card card-body w-75">
+
+                                        <form class="form-inline" action="{{ url_for('user_bp.add_ticket') }}" method="post">
+                                          <select name="ticket-id" class="form-control">
+                                              {% for tt in tts %}
+                                                {% if ((tt.ticket_type_type.name == ttt.name) and (tt.tickets | length < tt.max_cap)) %}
+                                                    <option value="{{ tt.id }}">{{ tt.name  }}</option>
+                                                {% endif %}
+                                              {% endfor %}
+                                          </select>
+                                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                          <div style="margin-top:15px;margin-left:20px;" class="form-check mb-2 mr-sm-2">
+                                            <button type="submit" class="btn btn-success mb-2">Pridať</button>
+                                          </div>
+                                        </form>
+                                      </div>
+                                    </div>
+                               </div>
+                                <div class="row">
+                                    <div style="padding-top:10px;padding-left:30px;padding-bottom:10px;">
+                                        <a href="#" id="add-user" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-piece{{ ttt.id }}" aria-expanded="false" aria-controls="new-piece{{ttt.id}}">Pridať</a>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="showQRCode" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header d-block">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title text-center" id="exampleModalLongTitle">Tvoj lístok na festival</h5>
+
+          </div>
+          <div class="modal-body d-block d-flex justify-content-center">
+            <div id="qrcode" class="text-center d-block d-flex justify-content-center"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script>
         const makeQR = (url, filename) => {
           var qrcode = new QRCode("qrcode", {
             text: "http://jindo.dev.naver.com/collie",
-            width: 128,
-            height: 128,
+            width: 400,
+            height: 400,
             colorDark: "#000000",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
@@ -52,6 +182,7 @@
         makeQR(document.querySelector('#text').value, 'qr-code.png')
 
         document.querySelectorAll("#grcode img")
+
 
     </script>
 {% endblock content %}

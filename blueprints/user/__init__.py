@@ -9,11 +9,29 @@ user_bp = Blueprint("user_bp", __name__, template_folder="templates", static_fol
 
 @user_bp.route("/user-page/")
 def user_page():
-    return render_template("user/user_page.html",user = current_user)
+    ttts = TicketTypeType.query.all()
+    tts = TicketType.query.all()
+
+    return render_template("user/user_page.html",  tts=tts, ttts=ttts, user=current_user)
 
 
-@user_bp.route("/user-page/")
-def user_page_after_reg():
+@user_bp.route("/add-ticket/", methods=['POST'])
+def add_ticket():
+
+    ticket_id = request.form["ticket-id"]
+    tt = TicketType.query.filter(TicketType.id == ticket_id).first()
+
+    if tt and len(tt.tickets) < tt.max_cap:
+        ticket = Ticket(tt, current_user)
+        db_session.add(ticket)
+        db_session.commit()
+        flash(f"'{tt.name}' bol pridaný do tvojho lístku","success")
+
+    return redirect(url_for("user_bp.user_page"))
+
+
+@user_bp.route("/delete-ticket/<int:ticket_id>/")
+def del_ticket(ticket_id):
     return render_template("user/user_page.html", after_reg=True)
 
 
