@@ -80,13 +80,13 @@
                 <h4 style="padding-top:20px;" class="text-strong"><strong>Tvoj Program:</strong></h4>
                 <div>
                     {% for ttt in ttts %}
-                        <h5 style="margin-top:30px;" class="text-muted">{{ ttt.name }}:</h5>
+                        <h5 style="margin-top:40px;" class="text-muted">{{ ttt.name }}:</h5>
                         {% for ticket in user.tickets %}
                             {% if ticket.ticket_type.ticket_type_type == ttt %}
 
-                                <div class="card" id="card{{ ttt.name }}">
+                                <div class="card" id="card{{ ttt.name }}" style="margin-top:10px;">
                                   <div class="card-body">
-                                    <div id="operation2{{ttt.name}}" style="display:none">
+                                    <div id="operation2{{ttt.name}}{{ ticket.id }}" style="display:none">
                                         <div class="col-2 d-none d-md-block">
                                             <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
                                         </div>
@@ -102,14 +102,14 @@
                                         <div class="col-2 card-button-user" style="padding-top:;">
                                             <div class="row">
                                                 <div class="col">
-                                                    <button type="button" onclick="showCardTicket('operation1{{ttt.name}}', 'main_place{{ttt.name}}')" class="btn btn-secondary">Zmeniť</button>
+                                                    <button type="button" onclick="showCardTicket('operation1{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zmeniť</button>
                                                     <a href="{{ url_for('user_bp.del_ticket',ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
                                                 </div>
                                             </div>
 
                                         </div>
                                     </div>
-                                    <div id="operation1{{ttt.name}}" style="display:none">
+                                    <div id="operation1{{ttt.name}}{{ ticket.id }}" style="display:none">
                                         <form class="form-inline" action="{{ url_for('user_bp.change_ticket') }}" method="post">
                                           <select style="margin-left:20px;" name="ticket-id" class="form-control" required>
                                               {% for tt in tts %}
@@ -122,11 +122,11 @@
                                           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                           <div style="margin-top:15px;margin-left:20px;" class="form-check mb-2 mr-sm-2">
                                             <button type="submit" class="btn btn-success mb-2">Zmeniť</button>
-                                            <button style="margin-top:-8px;margin-left:5px;" type="button" onclick="showCardTicket('operation2{{ttt.name}}', 'main_place{{ttt.name}}')" class="btn btn-secondary">Zrušiť</button>
+                                            <button style="margin-top:-8px;margin-left:5px;" type="button" onclick="showCardTicket('operation2{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zrušiť</button>
                                           </div>
                                         </form>
                                     </div>
-                                    <div class="row" id="main_place{{ttt.name}}">
+                                    <div class="row" id="main_place{{ttt.name}}{{ ticket.id }}">
                                         <div class="col-2 d-none d-md-block">
                                             <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
                                         </div>
@@ -142,7 +142,7 @@
                                         <div class="col-2 card-button-user" style="padding-top:;">
                                             <div class="row">
                                                 <div class="col">
-                                                    <button type="button" onclick="showCardTicket('operation1{{ttt.name}}', 'main_place{{ttt.name}}')" class="btn btn-secondary">Zmeniť</button>
+                                                    <button type="button" onclick="showCardTicket('operation1{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zmeniť</button>
                                                     <a href="{{ url_for('user_bp.del_ticket',ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
                                                 </div>
                                             </div>

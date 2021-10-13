@@ -71,6 +71,30 @@ def change_profile():
     return redirect(url_for("user_bp.user_page"))
 
 
+@user_bp.route("/confirm-user/<hash_user>/", methods=['GET'])
+def confirm_user_view(hash_user):
+    user = User.query.filter(User.code == hash_user).first()
+    if user.confirm:
+        return redirect(url_for("user_bp.user_page"))
+
+    flash("Na potvrdenie registrácie si vytvorte heslo do vášho konta", "info")
+    return render_template("user/confirm_reg.html", user=user)
+
+
+@user_bp.route("/confirm-user/<hash_user>/", methods=['POST'])
+def confirm_user_fun(hash_user):
+    user = User.query.filter(User.code == hash_user).first()
+
+    user.email = request.form["user-email"]
+    user.confirm = True
+    user.set_password(request.form["user-password"])
+    db_session.commit()
+
+    login_user(user)
+    flash("Vitajte vo svojom konte. Pred festivalom sa ujistite, že máte svoj QR kód s lístok na lestival stiahnutý", "success")
+    return redirect(url_for("user_bp.user_page"))
+
+
 @user_bp.route("/sign-in/", methods=['GET'])
 def sign_in_view():
     return render_template("user/sign_in.html")
