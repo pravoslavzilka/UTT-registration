@@ -20,11 +20,15 @@ def add_ticket():
     ticket_id = request.form["ticket-id"]
     tt = TicketType.query.filter(TicketType.id == ticket_id).first()
 
-    if tt and len(tt.tickets) < tt.max_cap:
+    already_ticket = Ticket.query.filter(Ticket.user == current_user, Ticket.ticket_type == tt).first()
+
+    if tt and len(tt.tickets) < tt.max_cap and not already_ticket:
         ticket = Ticket(tt, current_user)
         db_session.add(ticket)
         db_session.commit()
-        flash(f"'{tt.name}' bol pridaný do tvojho lístku","success")
+        flash(f"'{tt.name}' bol pridaný do tvojho lístku", "success")
+
+    flash("Na tento program už máte rezervovaný lístok", "info")
 
     return redirect(url_for("user_bp.user_page"))
 
@@ -40,12 +44,16 @@ def change_ticket():
 
         tt = TicketType.query.filter(TicketType.id == ticket_id).first()
 
-        if tt and len(tt.tickets) < tt.max_cap:
+        already_ticket = Ticket.query.filter(Ticket.user == current_user, Ticket.ticket_type == tt).first()
+
+        if tt and len(tt.tickets) < tt.max_cap and not already_ticket:
             ticket = Ticket(tt, current_user)
             db_session.add(ticket)
             db_session.delete(original_ticket)
             db_session.commit()
             flash(f"'{tt.name}' bol pridaný do tvojho lístku", "success")
+
+        flash("Na tento program už máte rezervovaný lístok", "info")
 
     return redirect(url_for("user_bp.user_page"))
 
@@ -113,7 +121,7 @@ def sign_in_fun():
             login_user(user)
 
         flash("Vitaj späť", "success")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("user_bp.user_page"))
 
     admin = Admin.query.filter(Admin.email == request.form["email"]).first()
 
@@ -123,7 +131,7 @@ def sign_in_fun():
         session["permit"] = admin.rank
 
         flash("Vitaj späť", "success")
-        return redirect(url_for("main_page"))
+        return redirect(url_for("user_bp.user_page"))
 
     flash("Chybný email alebo heslo", "danger")
     return render_template("user/sign_in.html")
