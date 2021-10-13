@@ -55,6 +55,7 @@ class User(Base):
     news = Column(Boolean)
 
     tickets = relationship("Ticket", back_populates="user", foreign_keys="[Ticket.user_id]")
+    feedback_messages = relationship("FeedBackMessages", back_populates="user", foreign_keys="[FeedBackMessages.user_id]")
 
     def __init__(self, name=None, email=None):
         self.name = name
@@ -80,6 +81,15 @@ class User(Base):
 
     def __repr__(self):
         return '<User %r>' % self.name
+
+
+class FeedBackMessages(Base):
+    __tablename__ = "feedback_messages"
+    id = Column(Integer, primary_key=True)
+    content = Column(String(750))
+    user_id = Column(Integer, ForeignKey('user.id'))
+
+    user = relationship("User", back_populates="feedback_messages", foreign_keys=[user_id])
 
 
 class Ticket(Base):

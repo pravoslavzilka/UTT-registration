@@ -10,6 +10,14 @@
 
 
 {% block content %}
+
+    <script>
+		$(document).ready(function(){
+  		 	$(".active").removeClass("active");
+  		 	$("#account").addClass("active");
+		});
+	</script>
+
     <style>
         #qrcode {
           width: 250px;
@@ -50,7 +58,7 @@
                         {{ user.city }}
                     </div>
                     <div style="padding-top:10px;">
-                        <a href="#">Upraviť profil</a>
+                        <a href="#settingModal" data-toggle="modal" data-target="#settingModal">Upraviť profil</a>
                     </div>
 
                 </div>
@@ -69,10 +77,10 @@
             <div id="book-list" style="" class="user-tickets col-md-8 col-lg-8 col-sm-12 col-xs-12">
                 <div  id="book-list2">
                 </div>
-                <h4 style="padding-bottom:20px;padding-top:20px;" class="text-strong"><strong>Tvoj Program:</strong></h4>
+                <h4 style="padding-top:20px;" class="text-strong"><strong>Tvoj Program:</strong></h4>
                 <div>
                     {% for ttt in ttts %}
-                        <h5 style="margin-top:10px;" class="text-muted">{{ ttt.name }}:</h5>
+                        <h5 style="margin-top:30px;" class="text-muted">{{ ttt.name }}:</h5>
                         {% for ticket in user.tickets %}
                             {% if ticket.ticket_type.ticket_type_type == ttt %}
 
@@ -148,9 +156,8 @@
                             {% endif %}
                         {% endfor %}
                         <div class="row">
-                                    <div class="collapse col-12 new-piece" id="new-piece{{ ttt.id }}">
+                                    <div class="collapse col-12 new-piece" style="padding-top:10px;" id="new-piece{{ ttt.id }}">
                                       <div class="card card-body w-75">
-
                                         <form class="form-inline" action="{{ url_for('user_bp.add_ticket') }}" method="post">
                                           <select name="ticket-id" class="form-control" required>
                                               {% for tt in tts %}
@@ -175,7 +182,10 @@
                                 <script>
                                      var myEle = document.getElementById("card{{ ttt.name }}");
                                         if(myEle){
-
+                                            if (myEle.id === "cardPrednášky"){
+                                                var element = document.getElementById("button{{ ttt.name }}");
+                                                element.classList.remove("d-none");
+                                            }
                                         } else {
                                             var element = document.getElementById("button{{ ttt.name }}");
                                             element.classList.remove("d-none");
@@ -186,7 +196,46 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="settingModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Upravenie profilu</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="needs-validation" id="userSettings" action="{{ url_for('user_bp.change_profile') }}" method="post" novalidate>
+              <div class="form-group">
+                <label >Meno:</label>
+                <input type="text" name="user-name" class="form-control" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="30" value="{{ user.name }}" required>
+              </div>
+              <div class="form-group">
+                <label >Vek:</label>
+                <input type="number" name="user-age" class="form-control" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="3" value="{{ user.age }}" required>
+              </div>
+              <div class="form-group">
+                <label >Email:</label>
+                <input type="email" name="user-email" class="form-control" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="30" value="{{ user.email }}" required>
+                  <div class="invalid-feedback">
+                      Zadajte platnú emailovú adresu
+                  </div>
+              </div>
+              <div class="form-group">
+                <label >Mesto:</label>
+                <input type="text" name="user-city" class="form-control" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="30" value="{{ user.city }}" required>
+              </div>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
+            <button type="submit" form="userSettings" class="btn btn-primary">Uložiť zmeny</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="modal fade" id="showQRCode" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -240,6 +289,24 @@
         function showCardTicket(param_div_id, main_div) {
           document.getElementById(main_div).innerHTML = document.getElementById(param_div_id).innerHTML;
         }
+
+        (function() {
+          'use strict';
+          window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
 
     </script>
 {% endblock content %}

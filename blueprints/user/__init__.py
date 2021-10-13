@@ -59,6 +59,18 @@ def del_ticket(ticket_id):
     return redirect(url_for("user_bp.user_page"))
 
 
+@user_bp.route("/change-profile/", methods=['POST'])
+def change_profile():
+    current_user.name = request.form["user-name"]
+    current_user.age = request.form["user-age"]
+    current_user.email = request.form["user-email"]
+    current_user.city = request.form["user-city"]
+
+    db_session.commit()
+    flash("Profil bol úspešne upravený", "success")
+    return redirect(url_for("user_bp.user_page"))
+
+
 @user_bp.route("/sign-in/", methods=['GET'])
 def sign_in_view():
     return render_template("user/sign_in.html")
@@ -171,5 +183,5 @@ def sign_up_fun():
 
     login_user(user)
 
-    flash("Tvoj profil bol úspešne vytvorený","success")
+    flash("Tvoj profil bol úspešne vytvorený", "success")
     return redirect(url_for("user_bp.user_page_after_reg"))

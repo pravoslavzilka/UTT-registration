@@ -44,7 +44,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="inputName">Meno</label>
-                  <input type="text" name="user-name" class="form-control" id="inputName" placeholder="Meno" required>
+                  <input type="text" name="user-name" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" class="form-control" id="inputName" placeholder="Meno" required>
                   <div class="invalid-feedback">
                     Zadaj platné meno
                   </div>
@@ -60,7 +60,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="inputEmail4">Email</label>
-                  <input type="email" name="user-email" class="form-control" id="inputEmail4" placeholder="Email" required>
+                  <input type="email" name="user-email" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" class="form-control" id="inputEmail4" placeholder="Email" required>
                    <div class="invalid-feedback">
                     Zadaj platný email
                   </div>
@@ -76,7 +76,7 @@
               <div class="form-row">
                   <div class="form-group col-md-6">
                       <label for="inputLoc">Miesto Bydliska</label>
-                      <input type="text" name="user-city" class="form-control" id="inputLoc" placeholder="Miesto" required>
+                      <input type="text" name="user-city" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="20" class="form-control" id="inputLoc" placeholder="Miesto" required>
                        <div class="invalid-feedback">
                         Zadaj platné miesto bydliska
                       </div>
