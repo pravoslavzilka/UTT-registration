@@ -14,6 +14,13 @@ def user_page():
     return render_template("user/user_page.html",  tts=tts, ttts=ttts, user=current_user)
 
 
+@user_bp.route("/user-page-ar/")
+def user_page_after_reg():
+    ttts = TicketTypeType.query.all()
+    tts = TicketType.query.all()
+    return render_template("user/user_page.html", tts=tts, ttts=ttts, user=current_user, after_reg=True)
+
+
 @user_bp.route("/add-ticket/", methods=['POST'])
 def add_ticket():
 
