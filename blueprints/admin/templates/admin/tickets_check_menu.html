@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    kontrola Lístkov
+{% endblock title %}
+
+
+{% block content %}
+
+<style>
+
+  .card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: .60em;
+    padding-right: .60em;
+  }
+  .card-registration .select-arrow {
+    top: 13px;
+  }
+  #reg-section {
+    margin-bottom:500px;
+  }
+
+  @media only screen and (max-width: 750px) {
+    #reg-section {
+      margin-bottom:800px;
+    }
+  }
+
+</style>
+
+<section class="vh-100 gradient-custom" id="reg-section">
+  <div class="container py-5 h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-12 col-lg-10 col-xl-10">
+        <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+          <div class="card-body p-4 p-md-5">
+            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Program:</h3>
+            {% for ttt in ttts %}
+              <h5 style="margin-top:40px;" class="text-muted">{{ ttt.name }}:</h5>
+              {% for tt in ttt.ticket_types %}
+                <div style="margin-top:20px;" class="row">
+                    <div class="col-2 d-none d-md-block">
+                        <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
+                    </div>
+                    <div class="col-8">
+                        <strong style="font-size:19px;"><a href="{{ url_for('admin_bp.tickets_scan',tt_id=tt.id) }}">{{ tt.name }}</a></strong>
+                        <div style="margin-top:5px;">
+                            <strong class="text-muted">Speaker:</strong> {{ tt.speaker }}
+                        </div>
+                        <div>
+                            <strong class="text-muted">Začiatok:</strong> {{ tt.start }}
+                        </div>
+                    </div>
+
+                </div>
+              {% endfor %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% endblock content %}

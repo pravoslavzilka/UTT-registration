@@ -1,0 +1,196 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Kontrola Lístkov {{ tt.name }}
+{% endblock title %}
+
+{% block head %}
+    <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js"></script>
+{% endblock head %}
+
+{% block content %}
+
+<style>
+
+  .card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: .60em;
+    padding-right: .60em;
+  }
+  .card-registration .select-arrow {
+    top: 13px;
+  }
+  #reg-section {
+    margin-bottom:500px;
+  }
+  #btn-scan-qr {
+      cursor: pointer;
+      color:white;
+    }
+  #container {
+      text-align: center;
+      margin: 0;
+    }
+
+  #qr-canvas {
+      margin: auto;
+      width: calc(100% - 20px);
+      max-width: 400px;
+    }
+
+  #success-check {
+    background-color:#50fc5b;
+  }
+
+  #denied-check {
+      background-color:#f97154;
+  }
+
+  @media only screen and (max-width: 750px) {
+    #canvas-area {
+        padding-left:-20px;
+        padding-right:-20px;
+    }
+  }
+
+</style>
+
+<div class="card">
+  <div class="card-body">
+
+        <div class="container d-flex justify-content-center" style="margin-top:10px;">
+            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Kontrola lístkov pre {{ tt.name }}</h3>
+        </div>
+        <div class="container d-flex justify-content-center" style="margin-bottom:10px;">
+
+                <div class="row">
+                    <canvas hidden="" id="qr-canvas"></canvas>
+                </div>
+
+        </div>
+
+        <div class="container d-flex justify-content-center" style="margin-bottom:10px;">
+            <div class="row">
+                    <a id="btn-scan-qr" class="btn btn-primary">Začať scanovať</a>
+                </div>
+                <div class="row">
+                    <button style="margin-left:40px;" id="btn-stop-qr" hidden="" class="btn btn-secondary" onclick="stopScan()">Stop</button>
+                </div>
+        </div>
+
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                 <div id="qr-resultS" hidden="">
+                     <div class="alert alert-custom fade in alert-dismissable show" id="success-check">
+                       <b>Schávelná:</b> <span id="outputDataS"></span>
+                     </div>
+                 </div>
+             </div>
+             <div class="row d-flex justify-content-center">
+                 <div id="qr-resultD" hidden="">
+                     <div class="alert alert-custom  fade in alert-dismissable show" id="denied-check">
+                         <b>Zamietnutá:</b> <span id="outputDataD"></span>
+                     </div>
+                 </div>
+            </div>
+
+        </div>
+  </div>
+</div>
+
+<script>
+
+    var qrcode = window.qrcode;
+
+    const video = document.createElement("video");
+    const canvasElement = document.getElementById("qr-canvas");
+    const canvas = canvasElement.getContext("2d");
+
+    const qrResultS = document.getElementById("qr-resultS");
+    const qrResultD = document.getElementById("qr-resultD");
+    const outputDataS = document.getElementById("outputDataS");
+    const outputDataD = document.getElementById("outputDataD");
+    const btnScanQR = document.getElementById("btn-scan-qr");
+    const btnStopQR = document.getElementById("btn-stop-qr");
+
+    let scanning = false;
+    const users_list = {{list_of_users | tojson}};
+
+    qrcode.callback = (res) => {
+      if (res) {
+        if (users_list.indexOf(res) >= 0) {
+          outputDataS.innerText = "Vstupenka bola overená";
+          qrResultS.hidden = false;
+
+        } else {
+          outputDataD.innerText = "Skús reloadnúť stránku";
+          qrResultD.hidden = false;
+
+        }
+        setTimeout( function() {scanAgain();}, 1000);
+
+      }
+    };
+
+
+    btnScanQR.onclick = () => {
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "environment" } })
+        .then(function(stream) {
+          scanning = true;
+          qrResultS.hidden = true;
+          qrResultD.hidden = true;
+          btnScanQR.hidden = true;
+          btnStopQR.hidden = false;
+          canvasElement.hidden = false;
+          video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+          video.srcObject = stream;
+          video.play();
+          tick();
+          scan();
+        });
+    };
+
+    function tick() {
+      canvasElement.height = video.videoHeight;
+      canvasElement.width = video.videoWidth;
+      canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+
+      scanning && requestAnimationFrame(tick);
+    }
+
+    function scan() {
+      try {
+        qrcode.decode();
+      } catch (e) {
+        setTimeout(scan, 300);
+      }
+    }
+
+    function stopScan() {
+        scanning = false;
+
+        video.srcObject.getTracks().forEach(track => {
+          track.stop();
+        });
+        btnStopQR.hidden = true;
+        btnScanQR.hidden = false;
+        canvasElement.hidden = true;
+    }
+
+    function scanAgain() {
+        navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "environment" } })
+        .then(function(stream) {
+          qrResultS.hidden = true;
+          qrResultD.hidden = true;
+          tick();
+          scan();
+        });
+    }
+
+</script>
+
+
+{% endblock content %}
