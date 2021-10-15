@@ -5,7 +5,7 @@
 {% endblock title%}
 
 {% block head %}
-    <script src="https://cdn.jsdelivr.net/npm/davidshimjs-qrcodejs@0.0.2/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 {% endblock head %}
 
 
@@ -37,6 +37,14 @@
                 margin-right:20px;
             }
           }
+         @media only screen and (max-width: 300px) {
+            #qrcode {
+              width: 200px;
+              height: 200px;
+              margin-top: 15px;
+            }
+
+         }
 
     </style>
 
@@ -48,7 +56,7 @@
             <div class="card user-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:165px;">
               <div class="card-body">
                 <div id="main_place">
-                    <h3 class="card-title">{{ user.name }}</h3>
+                    <h3 class="card-title">{{ user.name | truncate(13) }}</h3>
                     <div>
                         <strong>Email:</strong>
                         {{ user.email }}
@@ -67,9 +75,9 @@
                     <button id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" data-toggle="modal" data-target="#showQRCode">
 	                   Zobraziť QR kód
 	                </button>
-                        <a id='qrdl' type="button" style="margin-left:5px;" class="btn btn-info utilities-buttons" hidden>
+                        <button onclick="downloadQR()" id='qrdl' type="button" style="margin-left:5px;" class="btn btn-info utilities-buttons">
                           Stiahnúť QR kód
-                        </a>
+                        </button>
                </div>
 
 
@@ -247,8 +255,8 @@
 
           </div>
           <div class="modal-body d-block d-flex justify-content-center">
-            <div id="qrcode" class="text-center d-block d-flex justify-content-center"></div>
-
+            <div class="text-center d-block d-flex justify-content-center"></div>
+                <canvas id="qrcode" class="qrcode"></canvas>
           </div>
           <div style="padding-bottom:10px;" class="text-center d-block d-flex justify-content-center">
                 <strong>Pred festivalom sa ujistite že máte lístok stiahnutý</strong>
@@ -262,32 +270,48 @@
 
     <script>
         const makeQR = (url, filename) => {
-          var qrcode = new QRCode("qrcode", {
-            text: "http://jindo.dev.naver.com/collie",
-            width: 400,
-            height: 400,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-          });
-          qrcode.makeCode(url);
+          let qrcodeContainer = document.getElementById("qrcode");
+            qrcodeContainer.innerHTML = "";
+            new QRious({
+              element: qrcodeContainer,
+              value: '{{ user.code }}',
+              size: 600,
+              padding:50,
+            });
+            {% if after_reg %}
+                var link = document.createElement('a');
+                link.download = 'UTT-qr-ticket.png';
+                link.href = document.getElementById('qrcode').toDataURL()
+                link.click();
+            {% endif %}
 
-          setTimeout(() => {
-            let qelem = document.querySelector('#qrcode img')
-            let dlink = document.querySelector('#qrdl')
-            let qr = qelem.getAttribute('src');
-            dlink.setAttribute('href', qr);
-            dlink.setAttribute('download', 'qrcode_ticket');
-            dlink.removeAttribute('hidden');
-          }, 500);
+
+        }
+
+        function downloadQR() {
+            var link = document.createElement('a');
+            link.download = 'UTT-qr-ticket.png';
+            link.href = document.getElementById('qrcode').toDataURL()
+            link.click();
         }
 
         makeQR(document.querySelector('#text').value, 'qr-code.png')
 
-        document.querySelectorAll("#grcode img")
-
         function showCardTicket(param_div_id, main_div) {
           document.getElementById(main_div).innerHTML = document.getElementById(param_div_id).innerHTML;
+        }
+
+        function generateQRCode() {
+
+            let qrcodeContainer = document.getElementById("qrcode");
+            qrcodeContainer.innerHTML = "";
+            new QRious({
+              element: qrcodeContainer,
+              value: '{{ user.code }}',
+              size: 128,
+            });
+
+
         }
 
         (function() {
