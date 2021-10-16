@@ -150,7 +150,7 @@ def sign_out():
     logout_user()
     if "permit" in session:
         session.pop("permit")
-    flash("Bol si odhlásený","success")
+    flash("Boli ste odhlásený","success")
     return redirect(url_for("main_page"))
 
 

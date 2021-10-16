@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from models import TicketTypeType, TicketType, Admin
+from models import TicketTypeType, TicketType, Admin, User
 import datetime
 from database import db_session
 
@@ -75,4 +75,12 @@ def add_admin():
 
     flash("Nový admin bol pridaný", "success")
     return redirect(url_for("h_admin_bp.operations"))
+
+
+@h_admin_bp.route("stats")
+def stats():
+    non_confirm = len(User.query.filter(User.confirm == False).all())
+    all_users = len(User.query.all())
+    arrived_users = len(User.query.filter(User.confirm == False).all())
+
 
