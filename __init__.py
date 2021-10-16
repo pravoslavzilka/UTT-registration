@@ -3,12 +3,11 @@ from blueprints.admin.__init__ import admin_bp
 from blueprints.head_admin.__init__ import h_admin_bp
 from blueprints.user.__init__ import user_bp
 from database import db_session
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail, Message
 from threading import Thread
 from models import User, Admin
-from qrcode import QRCode
 import os
 
 

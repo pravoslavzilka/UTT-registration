@@ -213,7 +213,7 @@ def sign_up_fun():
     db_session.add(user)
     db_session.commit()
 
-    ttt = TicketTypeType.query.filter(TicketTypeType.name == "Prednášky").first()
+    ttt = TicketTypeType.query.filter(TicketTypeType.name == "Ďaľší Program").first()
     tts = TicketType.query.filter(TicketType.ticket_type_type == ttt).all()
 
     for tt in tts:
