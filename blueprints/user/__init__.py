@@ -36,8 +36,8 @@ def add_ticket():
         db_session.add(ticket)
         db_session.commit()
         flash(f"'{tt.name}' bol pridaný do tvojho lístku", "success")
-
-    flash("Na tento program už máte rezervovaný lístok", "info")
+    else:
+        flash("Na tento program už máte rezervovaný lístok", "info")
 
     return redirect(url_for("user_bp.user_page"))
 
@@ -61,8 +61,8 @@ def change_ticket():
             db_session.delete(original_ticket)
             db_session.commit()
             flash(f"'{tt.name}' bol pridaný do tvojho lístku", "success")
-
-        flash("Na tento program už máte rezervovaný lístok", "info")
+        else:
+            flash("Na tento program už máte rezervovaný lístok", "info")
 
     return redirect(url_for("user_bp.user_page"))
 
@@ -198,15 +198,15 @@ def sign_up_fun():
     else:
         user.news = False
     if block1:
-        if block1.max_cap <= len(Ticket.query.filter(Ticket.ticket_type == block1).all()):
+        if block1.max_cap > len(Ticket.query.filter(Ticket.ticket_type == block1).all()):
             ticket1 = Ticket(block1, user)
             db_session.add(ticket1)
     if block2:
-        if block2.max_cap <= len(Ticket.query.filter(Ticket.ticket_type == block2).all()):
+        if block2.max_cap > len(Ticket.query.filter(Ticket.ticket_type == block2).all()):
             ticket2 = Ticket(block2, user)
             db_session.add(ticket2)
     if block3:
-        if block3.max_cap <= len(Ticket.query.filter(Ticket.ticket_type == block2).all()):
+        if block3.max_cap > len(Ticket.query.filter(Ticket.ticket_type == block2).all()):
             ticket3 = Ticket(block3, user)
             db_session.add(ticket3)
 
@@ -225,5 +225,5 @@ def sign_up_fun():
     login_user(user)
 
     flash("Tvoj profil bol úspešne vytvorený", "success")
-    return redirect(url_for("user_bp.user_page_after_reg"))
+    return redirect(url_for("send_reg_email"))
 

@@ -1,28 +1,29 @@
 from models import *
 from database import db_session, init_db
+import uuid
 
 init_db()
 
 admin = Admin("Admin", "admin@localhost", 1)
 admin.set_password("sigur")
 
-user = User("Jožo Ráž", "jozo@raz")
-user.set_password("sichuan")
+user = User("Jožo Ráž", "dub@localhost")
+user.set_password("shibajedoge")
+user.code = uuid.uuid4().hex
 
 ttt = TicketTypeType()
-ttt.name = "Workshop blok 1"
+ttt.name = "Workshop I. BLOK"
 
 ttt2 = TicketTypeType()
-ttt2.name = "Workshop blok 2"
+ttt2.name = "Workshop II. BLOK"
 
 ttt3 = TicketTypeType()
-ttt3.name = "Workshop blok 3"
+ttt3.name = "Workshop III. BLOK"
 
 ttt4 = TicketTypeType()
-ttt4.name = "Prednášky"
+ttt4.name = "Ďaľší Program"
 
-tt = TicketType("Workshop 1", "Vlado Kunis",40)
-tt.ticket_type_type = ttt
+tt = TicketType("Workshop 1", "Vlado Kunis", 40, ttt)
 
 t = Ticket(tt, user)
 

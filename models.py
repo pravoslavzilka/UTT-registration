@@ -1,12 +1,13 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Time, LargeBinary
 from sqlalchemy.orm import relationship
+from sqlalchemy.schema import Sequence
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import Base
 
 
 class Admin(Base):
     __tablename__ = 'admins'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence('admin_ids_seq', start=2000, increment=1), primary_key=True)
     name = Column(String(50), unique=True)
     email = Column(String(120), unique=True)
     password = Column(String(128))
@@ -53,6 +54,9 @@ class User(Base):
     who = Column(String(100))
     where = Column(String(100))
     news = Column(Boolean)
+
+    active_place_id = Column(Integer, ForeignKey('ticket_type.id'))
+    active_place = relationship("TicketType", back_populates="users", foreign_keys=[active_place_id])
 
     tickets = relationship("Ticket", back_populates="user", foreign_keys="[Ticket.user_id]")
     feedback_messages = relationship("FeedBackMessages", back_populates="user", foreign_keys="[FeedBackMessages.user_id]")
@@ -117,12 +121,14 @@ class TicketType(Base):
     max_cap = Column(Integer)
     ticket_type_type_id = Column(Integer, ForeignKey('ticket_type_type.id'))
 
+    users = relationship("User", back_populates="active_place")
     ticket_type_type = relationship("TicketTypeType", back_populates="ticket_types", foreign_keys=[ticket_type_type_id])
 
-    def __init__(self, name=None, speaker=None, max_cap=None):
+    def __init__(self, name=None, speaker=None, max_cap=None, ticket_type_type=None):
         self.name = name
         self.speaker = speaker
         self.max_cap = max_cap
+        self.ticket_type_type = ticket_type_type
 
 
 class TicketTypeType(Base):

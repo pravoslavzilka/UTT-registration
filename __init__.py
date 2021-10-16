@@ -56,11 +56,11 @@ login_manager.session_protection = "strong"
 
 @app.route("/")
 def main_page():
-    return render_template("index.html")
+    return redirect(url_for("user_bp.user_page"))
 
 
-@app.route("/test-email/")
-def test_email():
+@app.route("/send-email/")
+def send_reg_email():
 
     msg = Message(sender="registracia@uciacasatrnava.sk")
     msg.subject = "Ďalujeme za vašu registráciu"
@@ -68,7 +68,7 @@ def test_email():
     msg.html = render_template("emails/reg-email.html")
     Thread(target=send_email, args=(app, msg)).start()
 
-    return redirect(url_for("user_bp.user_page"))
+    return redirect(url_for("user_bp.user_page_after_reg"))
 
 
 def send_email(app, msg):

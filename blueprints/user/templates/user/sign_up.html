@@ -19,12 +19,12 @@
     top: 13px;
   }
   #reg-section {
-    margin-bottom:500px;
+    margin-bottom:700px;
   }
 
   @media only screen and (max-width: 750px) {
     #reg-section {
-      margin-bottom:800px;
+      margin-bottom:1100px;
     }
   }
 
@@ -43,8 +43,8 @@
                 </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="inputName">Meno</label>
-                  <input type="text" name="user-name" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" class="form-control" id="inputName" placeholder="Meno" required>
+                  <label for="inputName">Celé Meno</label>
+                  <input type="text" name="user-name" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" class="form-control" id="inputName" placeholder="Celé Meno" required>
                   <div class="invalid-feedback">
                     Zadaj platné meno
                   </div>
@@ -76,7 +76,7 @@
               <div class="form-row">
                   <div class="form-group col-md-6">
                       <label for="inputLoc">Miesto Bydliska</label>
-                      <input type="text" name="user-city" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="20" class="form-control" id="inputLoc" placeholder="Miesto" required>
+                      <input type="text" name="user-city" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="20" class="form-control" id="inputLoc" placeholder="Mesto" required>
                        <div class="invalid-feedback">
                         Zadaj platné miesto bydliska
                       </div>
@@ -112,7 +112,6 @@
                         <option>Škola</option>
                         <option>Plagáty, citylighty</option>
                         <option>Reklama v autobuse</option>
-                        <option>Dôchodca</option>
                         <option>Iné</option>
                       </select>
                   </div>
@@ -129,8 +128,8 @@
                   <select name="user-block1" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
-                      {% if ((tt.ticket_type_type.name == "Workshop blok 1") and (tt.tickets | length < tt.max_cap)) %}
-                        <option>{{ tt.name }} ({{ tt.speaker }})</option>
+                      {% if ((tt.ticket_type_type.name == "Workshop I. BLOK") and (tt.tickets | length < tt.max_cap)) %}
+                        <option value="{{ tt.name }}">{{ tt.name }}</option>
                       {% endif %}
                     {% endfor %}
                   </select>
@@ -141,8 +140,8 @@
                   <select name="user-block2" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
-                      {% if ((tt.ticket_type_type.name == "Workshop blok 2") and (tt.tickets | length < tt.max_cap)) %}
-                        <option>{{ tt.name }} ({{ tt.speaker }})</option>
+                      {% if ((tt.ticket_type_type.name == "Workshop II. BLOK") and (tt.tickets | length < tt.max_cap)) %}
+                        <option value="{{ tt.name }}">{{ tt.name }} ({{ tt.speaker }})</option>
                       {% endif %}
                     {% endfor %}
                   </select>
@@ -154,21 +153,21 @@
                   <select name="user-block3" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
-                      {% if ((tt.ticket_type_type.name == "Workshop blok 3") and (tt.tickets | length < tt.max_cap)) %}
-                        <option>{{ tt.name }} ({{ tt.speaker }})</option>
+                      {% if ((tt.ticket_type_type.name == "Workshop III. BLOK") and (tt.tickets | length < tt.max_cap)) %}
+                        <option value="{{ tt.name }}">{{ tt.name }} ({{ tt.speaker }})</option>
                       {% endif %}
                     {% endfor %}
                   </select>
                 </div>
               </div>
               <div class="form-group" >
-                <h5 style="padding-top:20px; color:grey;"><strong>Prednášky:</strong></h5>
+                <h5 style="padding-top:20px; color:grey;"><strong>Program:</strong></h5>
               </div>
                <div class="form-row">
                 <div class="form-group col-md-6">
                   <div class="form-check" style="margin-left:10px;font-size:17px;">
                     {% for tt in tts %}
-                      {% if ((tt.ticket_type_type.name == "Prednášky") and (tt.tickets | length < tt.max_cap)) %}
+                      {% if ((tt.ticket_type_type.name == "Ďaľší Program") and (tt.tickets | length < tt.max_cap)) %}
                         <input name="user-{{tt.id }}" id="{{ tt.name }}" class="form-check-input" type="checkbox">
                         <label class="form-check-label" for="{{ tt.name }}">
                            {{ tt.name }} ({{ tt.speaker }})
@@ -182,10 +181,15 @@
                 <div class="form-check">
                   <input name="user-accept" class="form-check-input" type="checkbox" id="accept-terms" required>
                   <label class="form-check-label" for="accept-terms">
-                    Súhlasím so spracovaním údajov
+                    Súhlasím so spracovaním údajov <a  data-toggle="collapse" href="#moreInfo" role="button" aria-expanded="false" aria-controls="moreInfo">viac info</a>
                   </label>
                   <div class="invalid-feedback">
                     Na spracovanie registrácie potrebujeme váš súhlas
+                  </div>
+                  <div style="margin-top:10px;margin-bottom:10px;" class="collapse" id="moreInfo">
+                    <div class="card card-body">
+                      V súlade s nariadením Európskeho parlamentu a Rady (EÚ) 2016/679 a so zákonom č. 18/2018 Z.z. o ochrane osobných údajov a o zmene a doplnení niektorých zákonov dobrovoľne udeľujem súhlas so spracúvaním mojich osobných údajov v rozsahu mnou poskytnutých osobných údajov organizácii Občianske združenie Lifestarter. Ľ. Podjavorinskej 20, 917 01 Trnava; IČO: 50718274;. Odoslaním formulára zároveň potvrdzujem, že som sa oboznámil/-a s informáciami o spracúvaní a ochrane osobných údajov, dostupných na https://lifestarter.sk/wp-content/uploads/2020/06/Ochrana-osobných-údajov-občianske-združenie.pdf
+                    </div>
                   </div>
                 </div>
                 <div class="form-check" style="padding-top:10px;">
