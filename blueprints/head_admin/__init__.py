@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from models import TicketTypeType, TicketType, Admin, User
+from models import TicketTypeType, TicketType, Admin, User, Ticket
 import datetime
 from database import db_session
 
@@ -28,7 +28,7 @@ def add_piece():
     db_session.commit()
 
     flash(f"Nová časť programu v {ttt.name} bola pridaná", "success")
-    return redirect(url_for("h_admin_bp.operations"))
+    return redirect(url_for("h_admin_bp.stats"))
 
 
 @h_admin_bp.route("/edit-piece/", methods=['POST'])
@@ -51,7 +51,7 @@ def edit_piece():
     db_session.commit()
 
     flash(f"Časť programu '{tt.name}' bola upravená", "success")
-    return redirect(url_for("h_admin_bp.operations"))
+    return redirect(url_for("h_admin_bp.stats"))
 
 
 @h_admin_bp.route("/delete-piece/<int:piece_id>/")
@@ -62,7 +62,7 @@ def delete_piece(piece_id):
     db_session.commit()
 
     flash(f"Časť programu '{tt.name}' bola vymazaná", "success")
-    return redirect(url_for("h_admin_bp.operations"))
+    return redirect(url_for("h_admin_bp.stats"))
 
 
 @h_admin_bp.route('add-admin',methods=['POST'])
@@ -74,13 +74,24 @@ def add_admin():
     db_session.commit()
 
     flash("Nový admin bol pridaný", "success")
-    return redirect(url_for("h_admin_bp.operations"))
+    return redirect(url_for("h_admin_bp.stats"))
 
 
-@h_admin_bp.route("stats")
+@h_admin_bp.route("/stats/")
 def stats():
     non_confirm = len(User.query.filter(User.confirm == False).all())
     all_users = len(User.query.all())
-    arrived_users = len(User.query.filter(User.confirm == False).all())
+    arrived_users = len(User.query.filter(~User.active_places.any()).all())
+    ttts = TicketTypeType.query.filter()
 
+    return render_template("head_admin/stats.html", non_confirm=non_confirm, all_users=all_users,
+                           arrived_users=arrived_users, ttts=ttts)
+
+
+@h_admin_bp.route("/stats/<int:piece_id>/")
+def stats_piece(piece_id):
+    tt = TicketType.query.filter(TicketType.id == piece_id).first()
+    confirmed_users = "broken"
+
+    return render_template("head_admin/stats_piece.html", tt=tt, confirmed_users=confirmed_users)
 

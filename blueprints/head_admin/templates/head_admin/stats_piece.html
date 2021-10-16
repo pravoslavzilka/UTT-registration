@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Časť programu: {{ tt.name }}
+{% endblock title %}
+
+
+{% block content %}
+    <script>
+		$(document).ready(function(){
+  		 	$(".active").removeClass("active");
+  		 	$("#data").addClass("active");
+		});
+	</script>
+
+    <style>
+
+        .book-type-card {
+            height:225px;
+        }
+
+        @media only screen and (max-width: 700px) {
+            .book-list {
+                margin-top:200px;
+                padding-top:15px;
+            }
+            .book-type-card {
+                margin:10px;
+                height:260px;
+            }
+            .utilities-buttons {
+                display:none;
+            }
+
+            #search-bar {
+                margin: auto;
+                width: 50%;
+                padding: 10px;
+                margin-top:35px;
+            }
+        }
+
+    </style>
+
+
+
+
+    <div class="container" style="padding-top:100px;">
+        <div class="row">
+            <div class="card book-type-card col-md-4 col-lg-4 col-sm-12 col-xs-12" >
+              <div class="card-body">
+
+                <div id="main_place">
+                    <h3 class="card-title" >{{ tt.name }}</h3>
+                    <div>
+                        <div>
+                            <h6 class="text-muted" style="margin-top:-7px;">{{ tt.speaker }}</h6>
+                        </div>
+                        <div style="padding-top:3px;">
+                            <strong>Potvrdených:</strong>
+                            <label>{{ confirmed_users }}</label>
+                        </div>
+                        <div style="margin-top:-8px;">
+                            <strong>Aktuálnych: </strong>
+                            <label>{{ tt.users | length }}</label>
+                        </div>
+                        <div style="margin-top:-8px;">
+                            <strong>Celkovo: </strong>
+                            <label>{{ tt.tickets | length }}</label>
+                        </div>
+                    </div>
+                </div>
+
+              </div>
+            </div>
+            <div id="book-list" class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
+                <div  id="book-list2">
+                    <input placeholder="Vyhľadať users" type="text" class="form-control" style="width:200px;" id="search-bar">
+                </div>
+
+                <table class="table" style="margin-top:20px;">
+                  <thead class="thead-dark">
+                    <tr class="header">
+                      <th scope="col">#</th>
+                      <th scope="col">Meno</th>
+                      <th scope="col">Potvrdený</th>
+                        <th scope="col">Prišiel</th>
+                      <th scope="col">Odstrániť</th>
+                    </tr>
+                  </thead>
+                  <tbody id="listStudents">
+                    {% for ticket in tt.tickets %}
+                            <tr class="table">
+                              <th scope="row">{{ ticket.user.id }}</th>
+                              <td>{{ ticket.user.name }}</td>
+                              <td>{{ ticket.user.confirm }}</td>
+                              <td>
+                                  {% if tt in ticket.user.active_places %}
+                                    Áno
+                                  {% else %}
+                                    Nie
+                                  {% endif %}
+                              </td>
+                              <td>
+                                  <button> Odstrániť</button>
+                              </td>
+                            </tr>
+
+
+                    {% endfor %}
+
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <script>
+
+
+    </script>
+
+{% endblock content %}

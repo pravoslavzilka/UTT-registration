@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, flash
 from blueprints.admin.__init__ import admin_bp
 from blueprints.head_admin.__init__ import h_admin_bp
 from blueprints.user.__init__ import user_bp
@@ -68,6 +68,20 @@ def send_reg_email(email):
     Thread(target=send_email, args=(app, msg)).start()
 
     return redirect(url_for("user_bp.user_page_after_reg"))
+
+
+@app.route("/email-ask-confirm/")
+def email_ask_confirm():
+    users = User.query.filter(User.confirm == False).all()
+    for user in users:
+        msg = Message(sender="registracia@uciacasatrnava.sk")
+        msg.subject = "Potvrdenie registrácie"
+        msg.recipients = [user.email]
+        msg.html = render_template("emails/confirm-email.html", user_hash=user.code)
+        Thread(target=send_email, args=(app, msg)).start()
+
+    flash("Užívatelia boli vyzvaný na potvrdenie registrácie", "success")
+    return redirect(url_for("h_admin_bp.stats"))
 
 
 def send_email(app, msg):
