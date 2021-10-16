@@ -59,12 +59,12 @@ def main_page():
     return redirect(url_for("user_bp.user_page"))
 
 
-@app.route("/send-email/")
-def send_reg_email():
+@app.route("/send-email/<email>/")
+def send_reg_email(email):
 
     msg = Message(sender="registracia@uciacasatrnava.sk")
-    msg.subject = "Ďalujeme za vašu registráciu"
-    msg.recipients = ["michal@lifestarter.sk"]
+    msg.subject = "Ďakujeme za vašu registráciu"
+    msg.recipients = [email]
     msg.html = render_template("emails/reg-email.html")
     Thread(target=send_email, args=(app, msg)).start()
 

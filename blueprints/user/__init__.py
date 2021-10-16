@@ -225,5 +225,5 @@ def sign_up_fun():
     login_user(user)
 
     flash("Tvoj profil bol úspešne vytvorený", "success")
-    return redirect(url_for("send_reg_email"))
+    return redirect(url_for("send_reg_email", email=user.email))
 
