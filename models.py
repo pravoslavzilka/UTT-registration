@@ -91,6 +91,7 @@ class FeedBackMessages(Base):
     __tablename__ = "feedback_messages"
     id = Column(Integer, primary_key=True)
     content = Column(String(750))
+    email = Column(String(50))
     user_id = Column(Integer, ForeignKey('user.id'))
 
     user = relationship("User", back_populates="feedback_messages", foreign_keys=[user_id])

@@ -54,45 +54,73 @@
                         <h4 style="padding-bottom:10px;">{{ ttt.name }}</h4>
                         <div class="container">
                             {% for tt in ttt.ticket_types %}
-                                <div class="row">
-                                    <div class="col-md-10 col-lg-12 mx-auto card" style="margin-bottom:10px;">
-                                      <div class="card-body">
-                                          <div id="main_place{{tt.id}}">
-                                              <strong style="margin-left:-10px;">{{ tt.name }}</strong>
-                                              <label> | {{ tt.speaker }}</label>
-                                              <label> | {{ tt.start }}</label>
-                                              <label> | {{ tt.tickets | length }}/{{ tt.max_cap }}</label>
+                                <div class="card" id="card{{ ttt.name }}" style="margin-top:10px;">
+                                  <div class="card-body">
+                                    <div id="operation2{{ttt.name}}{{ ticket.id }}" style="display:none">
+                                        <div class="col-2 d-none d-md-block">
+                                            <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
+                                        </div>
+                                        <div class="col-8">
+                                            <strong style="font-size:19px;">{{ tt.name }}</strong>
+                                            <div style="margin-top:5px;">
+                                                <strong class="text-muted">Speaker:</strong> {{ tt.speaker }}
+                                            </div>
+                                            <div>
+                                                <strong class="text-muted">Začiatok:</strong> {{ tt.start }}
+                                            </div>
+                                        </div>
+                                        <div class="col-2 card-button-user" style="padding-top:;">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button type="button" onclick="showCardTicket('operation1{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zmeniť</button>
+                                                    <a href="{{ url_for('user_bp.del_ticket',ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
+                                                </div>
+                                            </div>
 
-                                              <a style="color:white;" class="btn btn-sm btn-danger float-right" href="{{url_for('h_admin_bp.delete_piece',piece_id=tt.id)}}">Del</a>
-                                              <button onclick="show('operation1{{tt.id}}','main_place{{tt.id}}')" style="margin-right:5px;color:white;" class="btn btn-sm btn-info float-right">Upraviť</button>
-                                          </div>
-                                          <div id="operation1{{tt.id}}" style="display:none">
-                                                <form class="form-inline" method="post" action="{{ url_for('h_admin_bp.edit_piece') }}">
-                                                  <input name="piece-name" type="text" class="form-control mb-1 mr-sm-1" value="{{ tt.name }}" placeholder="Názov" required>
-                                                  <input name="piece-speaker" type="text" class="form-control mb-1 mr-sm-1" value="{{ tt.speaker }}" placeholder="Speaker" required>
-                                                  <input name="piece-start" type="time" class="form-control mb-1 mr-sm-1" value="{{ tt.start }}"  required>
-                                                  <input name="piece-cap" type="number" style="max-width:105px;" class="form-control mb-1 mr-sm-1" value="{{ tt.max_cap }}"  placeholder="Max cap" required>
-                                                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                                  <input type="hidden" name="piece-id" value="{{ tt.id }}"/>
-                                                  <div class="form-check mb-2 mr-sm-2">
-                                                    <button onclick="show('operation2{{tt.id}}','main_place{{tt.id}}')" style="margin-right:5px;color:white;" class="btn btn-sm btn-secondary">Zrušiť</button>
-                                                    <button type="submit" style="color:white;" class="btn btn-sm btn-success">Zmeniť</button>
-                                                  </div>
-
-
-                                                </form>
-                                          </div>
-                                          <div id="operation2{{tt.id}}" style="display:none">
-                                              <strong style="margin-left:-10px;">{{ tt.name }}</strong>
-                                              <label> | {{ tt.speaker }}</label>
-                                              <label> | {{ tt.start }}</label>
-                                              <label> | {{ tt.tickets | length }}/{{ tt.max_cap }}</label>
-
-                                              <a style="color:white;" class="btn btn-sm btn-danger float-right" href="{{url_for('h_admin_bp.delete_piece',piece_id=tt.id)}}">Del</a>
-                                              <button onclick="show('operation1{{tt.id}}','main_place{{tt.id}}')" style="margin-right:5px;color:white;" class="btn btn-sm btn-info float-right">Upraviť</button>
-                                          </div>
-                                      </div>
+                                        </div>
                                     </div>
+                                    <div id="operation1{{ttt.name}}{{ ticket.id }}" style="display:none">
+                                        <form class="form-inline" action="{{ url_for('user_bp.change_ticket') }}" method="post">
+                                          <select style="margin-left:20px;" name="ticket-id" class="form-control" required>
+                                              {% for tt in tts %}
+                                                {% if ((tt.ticket_type_type.name == ttt.name) and (tt.tickets | length < tt.max_cap)) %}
+                                                    <option value="{{ tt.id }}">{{ tt.name  }}</option>
+                                                {% endif %}
+                                              {% endfor %}
+                                          </select>
+                                          <input type="hidden" name="original-ticket" value="{{ ticket.id }}" />
+                                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                          <div style="margin-top:15px;margin-left:20px;" class="form-check mb-2 mr-sm-2">
+                                            <button type="submit" class="btn btn-success mb-2">Zmeniť</button>
+                                            <button style="margin-top:-8px;margin-left:5px;" type="button" onclick="showCardTicket('operation2{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zrušiť</button>
+                                          </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="row" id="main_place{{ttt.name}}{{ ticket.id }}">
+                                        <div class="col-2 d-none d-md-block">
+                                            <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
+                                        </div>
+                                        <div class="col-8">
+                                            <strong style="font-size:19px;">{{ ticket.ticket_type.name }}</strong>
+                                            <div style="margin-top:5px;">
+                                                <strong class="text-muted">Speaker:</strong> {{ ticket.ticket_type.speaker }}
+                                            </div>
+                                            <div>
+                                                <strong class="text-muted">Začiatok:</strong> {{ ticket.ticket_type.start }}
+                                            </div>
+                                        </div>
+                                        <div class="col-2 card-button-user" style="padding-top:;">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <button type="button" onclick="showCardTicket('operation1{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zmeniť</button>
+                                                    <a href="{{ url_for('user_bp.del_ticket',ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                  </div>
                                 </div>
                             {% endfor %}
                             <div class="row">

@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template, session, request, flash, redirect, url_for, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from flask_mail import Mail, Message
-from threading import Thread
-from models import Admin, User, TicketType, Ticket, TicketTypeType
+from models import Admin, User, TicketType, Ticket, TicketTypeType, FeedBackMessages
 from database import db_session
 import uuid
 
@@ -140,7 +138,7 @@ def sign_in_fun():
         session["permit"] = admin.rank
 
         flash("Vitaj späť", "success")
-        return redirect(url_for("user_bp.user_page"))
+        return redirect(url_for("admin_bp.check_tickets_view"))
 
     flash("Chybný email alebo heslo", "danger")
     return render_template("user/sign_in.html")
@@ -226,4 +224,22 @@ def sign_up_fun():
 
     flash("Tvoj profil bol úspešne vytvorený", "success")
     return redirect(url_for("send_reg_email", email=user.email))
+
+
+@user_bp.route("send-message/", methods=['POST'])
+def send_message():
+    msg = FeedBackMessages()
+
+    if current_user.is_authenticated:
+        msg.user = current_user
+    else:
+        msg.email = request.form["user-email"]
+
+    msg.content = request.form["user-content"]
+
+    flash("Feedback bol odoslaný", "success")
+    db_session.add(msg)
+    db_session.commit()
+
+    return redirect(url_for('user_bp.user_page'))
 

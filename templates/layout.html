@@ -61,7 +61,7 @@
 	        		</li>
 			  		{% if session["permit"] == 1 %}
 						<li class="links-items nav-item">
-							<a class="nav-link" href="#">Štatistiky</a>
+							<a class="nav-link" href="#">Dáta</a>
 	        			</li>
 			  			<li class="links-items nav-item">
 							<a id="operations" class="nav-link" href="{{ url_for('h_admin_bp.operations') }}">Operácie</a>
@@ -106,7 +106,7 @@
 	          <!-- Grid column -->
 	          <div class="col-md-2 mb-3">
 	            <h6 class="text-uppercase font-weight-bold">
-	              <a target="_blank" href="https://youtu.be/dQw4w9WgXcQ">Pomoc</a>
+	              <a href="#feedbackModal" data-toggle="modal" data-target="#feedbackModal">Feedback</a>
 	            </h6>
 	          </div>
 	          <!-- Grid column -->
@@ -114,7 +114,7 @@
 	          <!-- Grid column -->
 	    		<div class="col-md-2 mb-3">
 	        	    <h6 class="text-uppercase font-weight-bold">
-	        	      <a href="https://github.com/pravoslavzilka/Book-Share">Kontakt</a>
+	        	      <a href="https://github.com/pravoslavzilka/Book-Share">Feedback</a>
 	        	    </h6>
 	        	  </div>
 	        	</div>
@@ -136,5 +136,36 @@
 	      <!-- Copyright -->
 	    </div>
 	</footer>
+	<div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="feedbackLabel">Pošlite nám feedback</h5>
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		  </div>
+		  <div class="modal-body">
+			<form action="{{ url_for('user_bp.send_message') }}" method="post" id="feedbackForm">
+			  {% if not current_user.is_authenticated %}
+				<div class="form-group">
+					<label class="col-form-label">Email:</label>
+					<input type="email" class="form-control" name="user-email" required>
+				  </div>
+			  {% endif %}
+			  <div class="form-group">
+				<label for="message-text" class="col-form-label">Správa:</label>
+				<textarea maxlength="750" class="form-control" name="user-content" id="message-text" required></textarea>
+			  </div>
+			  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			</form>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
+			<button type="submit" form="feedbackForm" class="btn btn-primary">Poslať</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
 </body>
 </html>
