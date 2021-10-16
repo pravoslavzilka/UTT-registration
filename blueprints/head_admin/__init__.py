@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from models import TicketTypeType, TicketType
+from models import TicketTypeType, TicketType, Admin
 import datetime
 from database import db_session
 
@@ -63,3 +63,16 @@ def delete_piece(piece_id):
 
     flash(f"Časť programu '{tt.name}' bola vymazaná", "success")
     return redirect(url_for("h_admin_bp.operations"))
+
+
+@h_admin_bp.route('add-admin',methods=['POST'])
+def add_admin():
+    admin = Admin(request.form["admin-name"], request.form["admin-email"], 2)
+    admin.set_password(request.form["admin-password"])
+
+    db_session.add(admin)
+    db_session.commit()
+
+    flash("Nový admin bol pridaný", "success")
+    return redirect(url_for("h_admin_bp.operations"))
+

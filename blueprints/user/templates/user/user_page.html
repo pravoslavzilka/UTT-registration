@@ -1,7 +1,7 @@
 {% extends "layout.html"%}
 
 {% block title %}
-    Tvoje Konto
+    Vaše Konto
 {% endblock title%}
 
 {% block head %}
@@ -97,7 +97,7 @@
                                                 <strong class="text-muted">Speaker:</strong> {{ ticket.ticket_type.speaker }}
                                             </div>
                                             <div>
-                                                <strong class="text-muted">Začiatok:</strong> {{ ticket.ticket_type.start }}
+                                                <strong class="text-muted">Začiatok:</strong> {{ ticket.ticket_type.start.strftime('%H:%M') }}
                                             </div>
                                         </div>
                                         <div class="col-2 card-button-user" style="padding-top:;">
@@ -138,7 +138,7 @@
                                                 <strong class="text-muted">Speaker:</strong> {{ ticket.ticket_type.speaker }}
                                             </div>
                                             <div>
-                                                <strong class="text-muted">Začiatok:</strong> {{ ticket.ticket_type.start }}
+                                                <strong class="text-muted">Začiatok:</strong> {{ ticket.ticket_type.start.strftime('%H:%M') }}
                                             </div>
                                         </div>
                                         <div class="col-2 card-button-user" style="padding-top:;">

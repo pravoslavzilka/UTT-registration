@@ -31,23 +31,14 @@
         }
     </style>
 
-    <div class="row py-5 px-4">
+    <div class="row py-5 px-4" style="">
         <div class="col-md-10 col-lg-8 mx-auto">
             <!-- Profile widget -->
             <div class="bg-white shadow rounded overflow-hidden">
 
-                <div class="bg-light p-4 d-flex justify-content-end text-center">
-                    <ul class="list-inline mb-0">
-                        <li class="list-inline-item">
-                            <h5 class="font-weight-bold mb-0 d-block">215</h5><small class="text-muted"> <i class="fas fa-image mr-1"></i>Účastníkov</small>
-                        </li>
-                        <li class="list-inline-item">
-                            <h5 class="font-weight-bold mb-0 d-block">745</h5><small class="text-muted"> <i class="fas fa-user mr-1"></i>Voľných</small>
-                        </li>
-                        <li class="list-inline-item">
-                            <h5 class="font-weight-bold mb-0 d-block">340</h5><small class="text-muted"> <i class="fas fa-user mr-1"></i>Začiatok</small>
-                        </li>
-                    </ul>
+                <div class="bg-light p-4 " >
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAdmin">Pridať Admina</button>
+
                 </div>
                 {% for ttt in ttts %}
                     <div class="px-4 py-3">
@@ -56,7 +47,7 @@
                             {% for tt in ttt.ticket_types %}
                                 <div class="card" id="card{{ ttt.name }}" style="margin-top:10px;">
                                   <div class="card-body">
-                                    <div id="operation2{{ttt.name}}{{ ticket.id }}" style="display:none">
+                                    <div id="operation2{{ttt.name}}{{ tt.id }}" style="display:none">
                                         <div class="col-2 d-none d-md-block">
                                             <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
                                         </div>
@@ -66,55 +57,65 @@
                                                 <strong class="text-muted">Speaker:</strong> {{ tt.speaker }}
                                             </div>
                                             <div>
+                                                <strong class="text-muted">Počet:</strong> {{ tt.max_cap }}
+                                            </div>
+                                            <div>
                                                 <strong class="text-muted">Začiatok:</strong> {{ tt.start }}
                                             </div>
                                         </div>
                                         <div class="col-2 card-button-user" style="padding-top:;">
                                             <div class="row">
                                                 <div class="col">
-                                                    <button type="button" onclick="showCardTicket('operation1{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zmeniť</button>
-                                                    <a href="{{ url_for('user_bp.del_ticket',ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
+                                                    <button type="button" onclick="changeTicket('operation1{{ttt.name}}{{ tt.id }}', 'main_place{{ttt.name}}{{ tt.id }}')" class="btn btn-secondary">Zmeniť</button>
+                                                    <a href="{{ url_for('h_admin_bp.delete_piece', piece_id= tt.id) }}" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
                                                 </div>
                                             </div>
 
                                         </div>
                                     </div>
-                                    <div id="operation1{{ttt.name}}{{ ticket.id }}" style="display:none">
-                                        <form class="form-inline" action="{{ url_for('user_bp.change_ticket') }}" method="post">
-                                          <select style="margin-left:20px;" name="ticket-id" class="form-control" required>
-                                              {% for tt in tts %}
-                                                {% if ((tt.ticket_type_type.name == ttt.name) and (tt.tickets | length < tt.max_cap)) %}
-                                                    <option value="{{ tt.id }}">{{ tt.name  }}</option>
-                                                {% endif %}
-                                              {% endfor %}
-                                          </select>
-                                          <input type="hidden" name="original-ticket" value="{{ ticket.id }}" />
+                                    <div id="operation1{{ttt.name}}{{ tt.id }}" style="display:none">
+                                        <form class="form-inline" action="{{ url_for('h_admin_bp.edit_piece') }}" method="post">
+                                          <input name="piece-name" type="text" value="{{ tt.name }}" class="form-control mb-2 mr-sm-2" placeholder="Názov {{ ttt.name }}" required>
+                                          <div class="input-group mb-2 mr-sm-2">
+                                            <input name="piece-speaker" value="{{ tt.speaker }}" type="text" class="form-control" placeholder="Speaker" required>
+                                          </div>
+
+                                          <div class="form-check mb-2 mr-sm-2">
+                                            <input name="piece-cap" type="number" style="width:100px;" value="{{ tt.max_cap }}" placeholder="max cap" class="form-control" required>
+                                          </div>
+                                          <div class="form-check mb-2 mr-sm-2">
+                                            <input name="piece-start" type="time" value="{{ tt.start }}" class="form-control" required>
+                                          </div>
+                                          <input type="hidden" name="piece-id" value="{{ tt.id }}"/>
                                           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                           <div style="margin-top:15px;margin-left:20px;" class="form-check mb-2 mr-sm-2">
                                             <button type="submit" class="btn btn-success mb-2">Zmeniť</button>
-                                            <button style="margin-top:-8px;margin-left:5px;" type="button" onclick="showCardTicket('operation2{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zrušiť</button>
+                                            <button style="margin-top:-8px;margin-left:5px;" type="button" onclick="changeTicket('operation2{{ttt.name}}{{ tt.id }}', 'main_place{{ttt.name}}{{ tt.id }}')" class="btn btn-secondary">Zrušiť</button>
                                           </div>
                                         </form>
                                     </div>
 
-                                    <div class="row" id="main_place{{ttt.name}}{{ ticket.id }}">
+                                    <div class="row" id="main_place{{ttt.name}}{{ tt.id }}">
                                         <div class="col-2 d-none d-md-block">
                                             <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
                                         </div>
                                         <div class="col-8">
-                                            <strong style="font-size:19px;">{{ ticket.ticket_type.name }}</strong>
+                                            <strong style="font-size:19px;">{{ tt.name }}</strong>
                                             <div style="margin-top:5px;">
-                                                <strong class="text-muted">Speaker:</strong> {{ ticket.ticket_type.speaker }}
+                                                <strong class="text-muted">Speaker:</strong> {{ tt.speaker }}
                                             </div>
                                             <div>
-                                                <strong class="text-muted">Začiatok:</strong> {{ ticket.ticket_type.start }}
+                                                <strong class="text-muted">Počet:</strong> {{ tt.users | length }} / {{ tt.tickets | length }} / {{ tt.max_cap }}
+                                            </div>
+                                            <div>
+                                                <strong class="text-muted">Začiatok:</strong> {{ tt.start }}
                                             </div>
                                         </div>
                                         <div class="col-2 card-button-user" style="padding-top:;">
                                             <div class="row">
                                                 <div class="col">
-                                                    <button type="button" onclick="showCardTicket('operation1{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zmeniť</button>
-                                                    <a href="{{ url_for('user_bp.del_ticket',ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
+                                                    <button type="button" onclick="changeTicket('operation1{{ttt.name}}{{ tt.id }}', 'main_place{{ttt.name}}{{ tt.id }}')" class="btn btn-secondary">Zmeniť</button>
+                                                    <a href="{{ url_for('h_admin_bp.delete_piece', piece_id= tt.id) }}" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
                                                 </div>
                                             </div>
 
@@ -124,7 +125,7 @@
                                 </div>
                             {% endfor %}
                             <div class="row">
-                                <div class="collapse col-12 new-piece" id="new-piece{{ttt.id}}">
+                                <div class="collapse col-12 new-piece" id="new-piece{{ttt.id}}" style="padding-top:10px;">
                                   <div class="card card-body">
                                     <strong class="" style="padding-bottom:5px;font-size: 18px;">Nový {{ ttt.name }}</strong>
                                     <form class="needs-validation" action="{{ url_for('h_admin_bp.add_piece') }}" method="post" style="margin-top:10px;">
@@ -142,20 +143,57 @@
                                   </div>
                                 </div>
                            </div>
-                            <div class="row">
-                                <div style="padding-top:10px;">
+                            <div class="row" style="">
+                                <div style="padding-top:20px;">
                                     <a href="#" id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-piece{{ttt.id}}" aria-expanded="false" aria-controls="new-piece{{ttt.id}}">Pridať</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
+                <div style="margin-bottom:100px;">
+
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="modal fade" id="addAdmin" tabindex="-1" role="dialog" aria-labelledby="addAdminLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addAdminLabel">Pridať Admin-a</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ url_for('h_admin_bp.add_admin') }}" id="addAdminForm">
+              <div class="form-group">
+                <label>Meno: </label>
+                <input name="admin-name" type="text" class="form-control"  placeholder="Meno" required>
+              </div>
+              <div class="form-group">
+                <label>Email: </label>
+                <input name="admin-email" type="email" class="form-control"  placeholder="Email" required>
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input name="admin-password" type="password" minlength="8" class="form-control" placeholder="Password" required>
+              </div>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušiť</button>
+            <button type="submit" form="addAdminForm" class="btn btn-primary">Pridať</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
-         function show(param_div_id, main_div) {
+         function changeTicket(param_div_id, main_div) {
           document.getElementById(main_div).innerHTML = document.getElementById(param_div_id).innerHTML;
         }
     </script>
