@@ -1,5 +1,7 @@
-from flask import Blueprint, render_template, session, request, flash, redirect, url_for
+from flask import Blueprint, render_template, session, request, flash, redirect, url_for, current_app
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Mail, Message
+from threading import Thread
 from models import Admin, User, TicketType, Ticket, TicketTypeType
 from database import db_session
 import uuid
@@ -224,3 +226,4 @@ def sign_up_fun():
 
     flash("Tvoj profil bol úspešne vytvorený", "success")
     return redirect(url_for("user_bp.user_page_after_reg"))
+

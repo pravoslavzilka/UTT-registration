@@ -1,11 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from blueprints.admin.__init__ import admin_bp
 from blueprints.head_admin.__init__ import h_admin_bp
 from blueprints.user.__init__ import user_bp
 from database import db_session
 from flask_login import LoginManager, current_user
 from flask_wtf.csrf import CSRFProtect
+from flask_mail import Mail, Message
+from threading import Thread
 from models import User, Admin
+from qrcode import QRCode
 import os
 
 
@@ -33,6 +36,15 @@ UsersStatus = []
 
 app.jinja_env.autoescape = True | False
 
+app.config["MAIL_SERVER"] = "smtp.websupport.sk"
+app.config["MAIL_PORT"] = "465"
+app.config["MAIL_USE_SSL"] = True
+app.config["MAIL_USERNAME"] = "registracia@uciacasatrnava.sk"
+app.config["MAIL_PASSWORD"] = "LearningTT2021"
+app.config['MAIL_DEFAULT_SENDER'] = "registracia@uciacasatrnava.sk"
+
+mail = Mail(app)
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -45,6 +57,23 @@ login_manager.session_protection = "strong"
 @app.route("/")
 def main_page():
     return render_template("index.html")
+
+
+@app.route("/test-email/")
+def test_email():
+
+    msg = Message(sender="registracia@uciacasatrnava.sk")
+    msg.subject = "Ďalujeme za vašu registráciu"
+    msg.recipients = ["michal@lifestarter.sk"]
+    msg.html = render_template("emails/reg-email.html")
+    Thread(target=send_email, args=(app, msg)).start()
+
+    return redirect(url_for("user_bp.user_page"))
+
+
+def send_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
 
 
 @app.errorhandler(405)
