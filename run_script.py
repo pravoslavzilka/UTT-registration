@@ -24,6 +24,7 @@ ttt4 = TicketTypeType()
 ttt4.name = "Ďaľší Program"
 
 tt = TicketType("Workshop 1", "Vlado Kunis", 40, ttt)
+tt.users.append(user)
 
 t = Ticket(tt, user)
 

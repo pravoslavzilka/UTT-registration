@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Zoznam všetkých návštevníkov
+{% endblock title %}
+
+
+{% block content %}
+    <script>
+		$(document).ready(function(){
+  		 	$(".active").removeClass("active");
+  		 	$("#data").addClass("active");
+		});
+	</script>
+
+    <style>
+        .grade-link {
+            color:black;
+        }
+        .grade-link:hover {
+            color:black;
+            text-decoration: none;
+        }
+        #live-search-box{
+           text-align:center;
+        }
+    </style>
+
+    <div class="container" style="margin-top:70px;">
+        <div class="row d-flex justify-content-center">
+            <h1>Všetci návštevníci</h1>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top:40px;">
+        <div class="row d-flex justify-content-center">
+            <form class="form-inline my-2 my-lg-0">
+              <input class="form-control mr-sm-2" id="live-search-box" type="search" placeholder="Vyhľadať usera" aria-label="Search">
+            </form>
+        </div>
+    </div>
+
+    <div class="container" style="padding-top:20px;">
+        <div class="row d-flex justify-content-center">
+            <a href="{{ url_for('h_admin_bp.confirm_users') }}" class="grade-link">
+                <div class="card center" style="margin:10px;">
+                  <div class="card-body">
+                    Potvrdený
+                  </div>
+                </div>
+            </a>
+            <a href="{{ url_for('h_admin_bp.non_confirm_users') }}" class="grade-link">
+                <div class="card center" style="margin:10px;">
+                  <div class="card-body">
+                    Nepotvrdený
+                  </div>
+                </div>
+            </a>
+            <a href="{{ url_for('h_admin_bp.arrived_users') }}" class="grade-link">
+                <div class="card center" style="margin:10px;">
+                  <div class="card-body">
+                    Prišli
+                  </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="container" style="padding-top:60px;">
+        <table class="table" id="books-table">
+          <thead class="thead-dark">
+            <tr class="header">
+              <th scope="col">#</th>
+              <th scope="col">Meno</th>
+              <th scope="col">Email</th>
+              <th scope="col">Prišiel</th>
+              <th scope="col">Potvrdený</th>
+              <th scope="col">Zobraziť</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+                {% if user.active_places %}
+                    <tr class="table-success">
+                      <th scope="row">{{ user.id }}</th>
+                      <td class="search-term">{{ user.name }}</td>
+                      <td>{{  user.email }}</td>
+                      <td>Áno</td>
+                      <td>{{ user.confirm }}</td>
+                      <td>
+                          <button class="btn btn-sm btn-info">Zobraziť</button>
+                      </td>
+                    </tr>
+                {% elif user.confirm %}
+                    <tr class="table-warning">
+                      <th scope="row">{{ user.id }}</th>
+                      <td class="search-term">{{ user.name }}</td>
+                      <td>{{  user.email }}</td>
+                      <td>Nie</td>
+                      <td>Potvrdený</td>
+                      <td>
+                          <button class="btn btn-sm btn-info">Zobraziť</button>
+                      </td>
+                    </tr>
+                {% else %}
+                    <tr class="table-danger">
+                      <th scope="row">{{ user.id }}</th>
+                      <td class="search-term">{{ user.name }}</td>
+                      <td>{{  user.email }}</td>
+                      <td>Nie</td>
+                      <td>Nepotvrdený</td>
+                      <td>
+                          <button class="btn btn-sm btn-info">Zobraziť</button>
+                      </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+
+          </tbody>
+        </table>
+
+
+
+    </div>
+
+    <script>
+        $(document).ready(function(){
+          $("#live-search-box").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#books-table tr:not(.header)").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+        });
+
+
+    </script>
+
+{% endblock content %}

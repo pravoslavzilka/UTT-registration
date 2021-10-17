@@ -1,8 +1,14 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Time, LargeBinary
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Time, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Sequence
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import Base
+
+
+association_table = Table('association', Base.metadata,
+    Column('ticket_type_id', ForeignKey('ticket_type.id'), primary_key=True),
+    Column('user_id', ForeignKey('user.id'), primary_key=True)
+)
 
 
 class Admin(Base):
@@ -55,8 +61,7 @@ class User(Base):
     where = Column(String(100))
     news = Column(Boolean)
 
-    active_place_id = Column(Integer, ForeignKey('ticket_type.id'))
-    active_place = relationship("TicketType", back_populates="users", foreign_keys=[active_place_id])
+    active_places = relationship("TicketType", secondary=association_table, back_populates="users")
 
     tickets = relationship("Ticket", back_populates="user", foreign_keys="[Ticket.user_id]")
     feedback_messages = relationship("FeedBackMessages", back_populates="user", foreign_keys="[FeedBackMessages.user_id]")
@@ -91,6 +96,7 @@ class FeedBackMessages(Base):
     __tablename__ = "feedback_messages"
     id = Column(Integer, primary_key=True)
     content = Column(String(750))
+    email = Column(String(50))
     user_id = Column(Integer, ForeignKey('user.id'))
 
     user = relationship("User", back_populates="feedback_messages", foreign_keys=[user_id])
@@ -121,7 +127,8 @@ class TicketType(Base):
     max_cap = Column(Integer)
     ticket_type_type_id = Column(Integer, ForeignKey('ticket_type_type.id'))
 
-    users = relationship("User", back_populates="active_place")
+    users = relationship("User", secondary=association_table, back_populates="active_places")
+
     ticket_type_type = relationship("TicketTypeType", back_populates="ticket_types", foreign_keys=[ticket_type_type_id])
 
     def __init__(self, name=None, speaker=None, max_cap=None, ticket_type_type=None):

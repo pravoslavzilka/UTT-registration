@@ -1,0 +1,492 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Admin rozhranie
+{% endblock title %}
+
+
+{% block content %}
+    <script>
+		$(document).ready(function(){
+  		 	$(".active").removeClass("active");
+  		 	$("#data").addClass("active");
+		});
+	</script>
+
+    <style>
+
+        ol > li::marker {
+          font-weight: bold;
+        }
+
+        @media only screen and (max-width: 700px) {
+            .book-list {
+                margin-top:260px;
+                padding-top:15px;
+            }
+            .student-card {
+                margin:10px;
+            }
+            .utilities-buttons {
+                display:none;
+            }
+
+            #myInput {
+                margin: auto;
+                width: 50%;
+                padding: 10px;
+            }
+        }
+
+    </style>
+
+
+
+
+    <div class="container" style="padding-top:100px;">
+        <div class="row">
+            <div class="card student-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:210px;">
+              <div class="card-body">
+                <h3 class="card-title" >Návštevníci</h3>
+                <div>
+                    <div>
+                        <strong>Nepotvrdený:</strong>
+                        <label>{{ non_confirm }}</label>
+                    </div>
+                    <div style="margin-top:-8px;">
+                        <strong>Zatiaľ prišlo: </strong>
+                        <label>{{ arrived_users }}</label>
+                    </div>
+                    <div style="margin-top:-8px;">
+                        <strong>Celkovo: </strong>
+                        <label>{{ all_users }}</label>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('h_admin_bp.all_users') }}" type="submit" style="margin-top:10px;" class="btn btn-sm btn-secondary ">Zobraziť zoznam</a>
+                    </div>
+                </div>
+              </div>
+                <div class="modal fade" id="excelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="exampleModalLabel">Nastavenia excelu</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+
+                        <form id="excel-form"  action="{{ url_for('h_admin_bp.add_users_excel') }}" method="post" style="margin-top:10px;" enctype="multipart/form-data">
+                          <div class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numStart" data-tip="tooltip" data-placement="top" >Prvý Riadok</label>
+                            </div>
+                            <div class="col">
+                              <input id="numStart" type="number" name="start-row" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numName" data-tip="tooltip" data-placement="top" >Stĺpec Mena</label>
+                            </div>
+                            <div class="col">
+                              <input id="numName" name="col-name" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numEmail" data-tip="tooltip" data-placement="bottom" >Stĺpec Emailu</label>
+                            </div>
+                            <div class="col">
+                                <input id="numEmail" type="number" name="col-email" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numAge" data-tip="tooltip" data-placement="bottom" >Stĺpec Veku</label>
+                            </div>
+                            <div class="col">
+                                <input id="numAge" type="number" name="col-age" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numPlace" data-tip="tooltip" data-placement="bottom" >Stĺpec Miesta</label>
+                            </div>
+                            <div class="col">
+                                <input id="numPlace" type="number" name="col-place" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numWho" data-tip="tooltip" data-placement="bottom">Stĺpec Kto</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWho" type="number" name="col-who" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numReg" data-tip="tooltip" data-placement="bottom">Stĺpec Program</label>
+                            </div>
+                            <div class="col">
+                                <input id="numReg" type="number" name="col-reg" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numOTP" data-tip="tooltip" data-placement="bottom">Stĺpec OTP</label>
+                            </div>
+                            <div class="col">
+                                <input id="numOTP" type="number" name="col-otp" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numWhere" data-tip="tooltip" data-placement="bottom">Stĺpec Skade</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWhere" type="number" name="col-where" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+
+                          </div>
+                          <div class="custom-file" style="margin-top:20px;">
+                            <input type="file" name="file" class="custom-file-input" id="customFile" required>
+                            <label class="custom-file-label" for="customFile">Vyber súbor</label>
+                          </div>
+                          <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
+                            Vyber platný súbor
+                          </div>
+
+                           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
+                        <button type="submit" class="btn btn-primary" form="excel-form">Načítať</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+               <div style="margin-top:20px;" class="d-flex justify-content-center">
+                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#emailModal">
+                      Poslať potvrdzujúci email
+                    </button>
+                   <button id="excel-book" style="margin-left:5px;" onclick="changeDiv('operation1')" class="btn btn-secondary utilities-buttons" type="button" data-toggle="modal" data-target="#excelModal">
+	                   Načítať excel
+	                </button>
+
+
+               </div>
+               <div class="d-flex justify-content-center">
+                   <button style="margin-top:10px;margin:10px;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAdmin">Pridať Admina</button>
+                   <button style="margin-left:5px;margin:10px;" class="btn btn-primary utilities-buttons" type="button" data-toggle="modal" data-target="#excelWorModal">
+	                   Načítať excel WOR
+	                </button>
+               </div>
+            </div>
+            <div id="book-list" class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
+
+
+                <div id="myTable">
+                    {% if tts != None %}
+                        {% for ttt in ttts %}
+                            <div class="px-4 py-3">
+                                <h4 style="padding-bottom:10px;">{{ ttt.name }}</h4>
+                                <div class="container">
+                                    {% for tt in ttt.ticket_types %}
+                                        <div class="card" id="card{{ ttt.name }}" style="margin-top:10px;">
+                                          <div class="card-body">
+                                            <div id="operation2{{ttt.name}}{{ tt.id }}" style="display:none">
+                                                <div class="col-2 d-none d-md-block">
+                                                    <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
+                                                </div>
+                                                <div class="col-8">
+                                                    <strong style="font-size:19px;"><a style="color:black;" href="{{ url_for('h_admin_bp.stats_piece',piece_id=tt.id) }}">{{ tt.name }}</a></strong>
+                                                    <div style="margin-top:5px;">
+                                                        <strong class="text-muted">Speaker:</strong> {{ tt.speaker }}
+                                                    </div>
+                                                    <div>
+                                                        <strong class="text-muted">Počet:</strong> {{ tt.users | length }} / {{ tt.tickets | length }} / {{ tt.max_cap }}
+                                                    </div>
+                                                    <div>
+                                                        <strong class="text-muted">Začiatok:</strong> {{ tt.start }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 card-button-user" style="padding-top:;">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <button type="button" onclick="changeTicket('operation1{{ttt.name}}{{ tt.id }}', 'main_place{{ttt.name}}{{ tt.id }}')" class="btn btn-secondary">Zmeniť</button>
+                                                            <a href="{{ url_for('h_admin_bp.delete_piece', piece_id= tt.id) }}" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div id="operation1{{ttt.name}}{{ tt.id }}" style="display:none">
+                                                <form class="form-inline" action="{{ url_for('h_admin_bp.edit_piece') }}" method="post">
+                                                  <input name="piece-name" type="text" value="{{ tt.name }}" class="form-control mb-2 mr-sm-2" placeholder="Názov {{ ttt.name }}" required>
+                                                  <div class="input-group mb-2 mr-sm-2">
+                                                    <input name="piece-speaker" value="{{ tt.speaker }}" type="text" class="form-control" placeholder="Speaker" required>
+                                                  </div>
+
+                                                  <div class="form-check mb-2 mr-sm-2">
+                                                    <input name="piece-cap" type="number" style="width:100px;" value="{{ tt.max_cap }}" placeholder="max cap" class="form-control" required>
+                                                  </div>
+                                                  <div class="form-check mb-2 mr-sm-2">
+                                                    <input name="piece-start" type="time" value="{{ tt.start }}" class="form-control" required>
+                                                  </div>
+                                                  <input type="hidden" name="piece-id" value="{{ tt.id }}"/>
+                                                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                  <div style="margin-top:15px;margin-left:20px;" class="form-check mb-2 mr-sm-2">
+                                                    <button type="submit" class="btn btn-success mb-2">Zmeniť</button>
+                                                    <button style="margin-top:-8px;margin-left:5px;" type="button" onclick="changeTicket('operation2{{ttt.name}}{{ tt.id }}', 'main_place{{ttt.name}}{{ tt.id }}')" class="btn btn-secondary">Zrušiť</button>
+                                                  </div>
+                                                </form>
+                                            </div>
+
+                                            <div class="row" id="main_place{{ttt.name}}{{ tt.id }}">
+                                                <div class="col-2 d-none d-md-block">
+                                                    <img style="margin-top:10px;" class="img-ticket-user" height="75" src="{{ url_for('static', filename='images/wor-icon.png') }}" />
+                                                </div>
+                                                <div class="col-8">
+                                                    <strong style="font-size:19px;"><a style="color:black;" href="{{ url_for('h_admin_bp.stats_piece',piece_id=tt.id) }}">{{ tt.name }}</a></strong>
+                                                    <div style="margin-top:5px;">
+                                                        <strong class="text-muted">Speaker:</strong> {{ tt.speaker }}
+                                                    </div>
+                                                    <div>
+                                                        <strong class="text-muted">Počet:</strong> {{ tt.users | length }} / {{ tt.tickets | length }} / {{ tt.max_cap }}
+                                                    </div>
+                                                    <div>
+                                                        <strong class="text-muted">Začiatok:</strong> {{ tt.start }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 card-button-user" style="padding-top:;">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <button type="button" onclick="changeTicket('operation1{{ttt.name}}{{ tt.id }}', 'main_place{{ttt.name}}{{ tt.id }}')" class="btn btn-secondary">Zmeniť</button>
+                                                            <a href="{{ url_for('h_admin_bp.delete_piece', piece_id= tt.id) }}" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    {% endfor %}
+                                    <div class="row">
+                                        <div class="collapse col-12 new-piece" id="new-piece{{ttt.id}}" style="padding-top:10px;">
+                                          <div class="card card-body">
+                                            <strong class="" style="padding-bottom:5px;font-size: 18px;">Nový {{ ttt.name }}</strong>
+                                            <form class="needs-validation" action="{{ url_for('h_admin_bp.add_piece') }}" method="post" style="margin-top:10px;">
+                                              <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="piece-name"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Názov" required>
+                                              <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="piece-speaker"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Speaker" required>
+                                              <div class="row">
+                                                 <div class="col-4">
+                                                     <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="3" name="piece-cap"  type="number" class="form-control mb-2 mr-sm-2" placeholder="Max. počet" required>
+                                                 </div>
+                                                 <div class="col-4">
+                                                    <input name="piece-start" style="max-width:90px;"  type="time" class="form-control" required>
+                                                 </div>
+                                              </div>
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <input type="hidden" name="piece-ttt" value="{{ ttt.id }}"/>
+                                              <button type="submit" class="btn btn-success float-right">Pridať</button>
+                                            </form>
+                                          </div>
+                                        </div>
+                                   </div>
+                                    <div class="row" style="">
+                                        <div style="padding-top:20px;">
+                                            <a style="margin-left:20px;" href="#" id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-piece{{ttt.id}}" aria-expanded="false" aria-controls="new-piece{{ttt.id}}">Pridať</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <label style="padding-left:20px;padding-top:10px;">Žiadne kategórie učebníc</label>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addAdmin" tabindex="-1" role="dialog" aria-labelledby="addAdminLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addAdminLabel">Pridať Admin-a</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ url_for('h_admin_bp.add_admin') }}" id="addAdminForm">
+              <div class="form-group">
+                <label>Meno: </label>
+                <input name="admin-name" type="text" class="form-control"  placeholder="Meno" required>
+              </div>
+              <div class="form-group">
+                <label>Email: </label>
+                <input name="admin-email" type="email" class="form-control"  placeholder="Email" required>
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input name="admin-password" type="password" minlength="8" class="form-control" placeholder="Password" required>
+              </div>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušiť</button>
+            <button type="submit" form="addAdminForm" class="btn btn-primary">Pridať</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="emailModalLabel">Zaslať email neovereným userom</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Naozaj poslať všetkým neovereným userom email ?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+              <a href="{{ url_for('email_ask_confirm') }}" class="btn btn-primary utilities-buttons">Áno</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+            <div class="modal fade" id="excelWorModal" tabindex="-1" role="dialog" aria-labelledby="excelWorModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="excelWorModalLabel">Nastavenia excelu pre Workshopy</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+
+                        <form id="excel-wor-form"  action="{{ url_for('h_admin_bp.add_users_excel_wor') }}" method="post" style="margin-top:10px;" enctype="multipart/form-data">
+                          <div class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numStartW" data-tip="tooltip" data-placement="top" >Prvý Riadok</label>
+                            </div>
+                            <div class="col">
+                              <input id="numStartW" type="number" name="start-row-w" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numNameW" data-tip="tooltip" data-placement="top" >Stĺpec Mena</label>
+                            </div>
+                            <div class="col">
+                              <input id="numNameW" name="col-name-w" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numEmailW" data-tip="tooltip" data-placement="bottom" >Stĺpec Emailu</label>
+                            </div>
+                            <div class="col">
+                                <input id="numEmailW" type="number" name="col-email-w" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numAgeW" data-tip="tooltip" data-placement="bottom" >Stĺpec Veku</label>
+                            </div>
+                            <div class="col">
+                                <input id="numAgeW" type="number" name="col-age-w" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numPlaceW" data-tip="tooltip" data-placement="bottom" >Stĺpec Miesta</label>
+                            </div>
+                            <div class="col">
+                                <input id="numPlaceW" type="number" name="col-place-w" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numWhoW" data-tip="tooltip" data-placement="bottom">Stĺpec Kto</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWhoW" type="number" name="col-who-w" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numWor1" data-tip="tooltip" data-placement="bottom" >Stĺpec Wor 1</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWor1" type="number" name="col-w-1" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numWor2" data-tip="tooltip" data-placement="bottom">Stĺpec Wor 2</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWor2" type="number" name="col-w-2" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                             <div style="padding-top:5px;" class="col">
+                                <label for="numWor3" data-tip="tooltip" data-placement="bottom">Stĺpec Wor 3</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWor3" type="number" name="col-w-3" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numNewsW" data-tip="tooltip" data-placement="bottom">Stĺpec News</label>
+                            </div>
+                            <div class="col">
+                                <input id="numNewsW" type="number" name="col-news-w" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numWhereW" data-tip="tooltip" data-placement="bottom">Stĺpec Skade</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWhereW" type="number" name="col-where-w" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numOTPW" data-tip="tooltip" data-placement="bottom">Stĺpec OTP</label>
+                            </div>
+                            <div class="col">
+                                <input id="numOTPW" type="number" name="col-otp-w" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+
+
+                          </div>
+                          <div class="custom-file" style="margin-top:20px;">
+                            <input type="file" name="file" class="custom-file-input" id="customFile" required>
+                            <label class="custom-file-label" for="customFile">Vyber súbor</label>
+                          </div>
+                          <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
+                            Vyber platný súbor
+                          </div>
+
+                           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
+                        <button type="submit" class="btn btn-primary" form="excel-wor-form">Načítať</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+    <script>
+         function changeTicket(param_div_id, main_div) {
+          document.getElementById(main_div).innerHTML = document.getElementById(param_div_id).innerHTML;
+        }
+    </script>
+
+
+
+{% endblock content %}

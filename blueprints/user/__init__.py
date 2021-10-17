@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template, session, request, flash, redirect, url_for, current_app
 from flask_login import login_user, logout_user, login_required, current_user
-from flask_mail import Mail, Message
-from threading import Thread
-from models import Admin, User, TicketType, Ticket, TicketTypeType
+from models import Admin, User, TicketType, Ticket, TicketTypeType, FeedBackMessages
 from database import db_session
 import uuid
 
@@ -10,6 +8,7 @@ user_bp = Blueprint("user_bp", __name__, template_folder="templates", static_fol
 
 
 @user_bp.route("/user-page/")
+@login_required
 def user_page():
     ttts = TicketTypeType.query.all()
     tts = TicketType.query.all()
@@ -17,6 +16,7 @@ def user_page():
 
 
 @user_bp.route("/user-page-ar/")
+@login_required
 def user_page_after_reg():
     ttts = TicketTypeType.query.all()
     tts = TicketType.query.all()
@@ -24,6 +24,7 @@ def user_page_after_reg():
 
 
 @user_bp.route("/add-ticket/", methods=['POST'])
+@login_required
 def add_ticket():
 
     ticket_id = request.form["ticket-id"]
@@ -43,6 +44,7 @@ def add_ticket():
 
 
 @user_bp.route("/change-ticket/", methods=['POST'])
+@login_required
 def change_ticket():
 
     ticket_id = request.form["ticket-id"]
@@ -68,6 +70,7 @@ def change_ticket():
 
 
 @user_bp.route("/delete-ticket/<int:ticket_id>/")
+@login_required
 def del_ticket(ticket_id):
     ticket = Ticket.query.filter(Ticket.id == ticket_id).first()
     db_session.delete(ticket)
@@ -77,6 +80,7 @@ def del_ticket(ticket_id):
 
 
 @user_bp.route("/change-profile/", methods=['POST'])
+@login_required
 def change_profile():
     current_user.name = request.form["user-name"]
     current_user.age = request.form["user-age"]
@@ -108,12 +112,14 @@ def confirm_user_fun(hash_user):
     db_session.commit()
 
     login_user(user)
-    flash("Vitajte vo svojom konte. Pred festivalom sa ujistite, že máte svoj QR kód s lístok na lestival stiahnutý", "success")
-    return redirect(url_for("user_bp.user_page"))
+    flash("Vitajte vo svojom konte. Pred festivalom sa ujistite, že máte svoj QR kód s lístkom na festival stiahnutý", "success")
+    return redirect(url_for("user_bp.user_page_after_reg"))
 
 
 @user_bp.route("/sign-in/", methods=['GET'])
 def sign_in_view():
+    if current_user.is_authenticated:
+        return redirect(url_for("user_bp.user_page"))
     return render_template("user/sign_in.html")
 
 
@@ -140,7 +146,7 @@ def sign_in_fun():
         session["permit"] = admin.rank
 
         flash("Vitaj späť", "success")
-        return redirect(url_for("user_bp.user_page"))
+        return redirect(url_for("admin_bp.check_tickets_view"))
 
     flash("Chybný email alebo heslo", "danger")
     return render_template("user/sign_in.html")
@@ -152,8 +158,8 @@ def sign_out():
     logout_user()
     if "permit" in session:
         session.pop("permit")
-    flash("Bol si odhlásený","success")
-    return redirect(url_for("main_page"))
+    flash("Boli ste odhlásený", "success")
+    return redirect(url_for("user_bp.sign_in_view"))
 
 
 @user_bp.route("/sign-up/", methods=['GET'])
@@ -226,4 +232,22 @@ def sign_up_fun():
 
     flash("Tvoj profil bol úspešne vytvorený", "success")
     return redirect(url_for("send_reg_email", email=user.email))
+
+
+@user_bp.route("send-message/", methods=['POST'])
+def send_message():
+    msg = FeedBackMessages()
+
+    if current_user.is_authenticated:
+        msg.user = current_user
+    else:
+        msg.email = request.form["user-email"]
+
+    msg.content = request.form["user-content"]
+
+    flash("Feedback bol odoslaný", "success")
+    db_session.add(msg)
+    db_session.commit()
+
+    return redirect(url_for('user_bp.user_page'))
 
