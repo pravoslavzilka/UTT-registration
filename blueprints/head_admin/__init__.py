@@ -82,7 +82,7 @@ def add_admin():
 def stats():
     non_confirm = len(User.query.filter(User.confirm == False).all())
     all_users = len(User.query.all())
-    arrived_users = len(User.query.filter(~User.active_places.any()).all())
+    arrived_users = len(User.query.filter(User.active_places).all())
     ttts = TicketTypeType.query.filter()
 
     return render_template("head_admin/stats.html", non_confirm=non_confirm, all_users=all_users,
@@ -95,6 +95,30 @@ def stats_piece(piece_id):
     confirmed_users = "broken"
 
     return render_template("head_admin/stats_piece.html", tt=tt, confirmed_users=confirmed_users)
+
+
+@h_admin_bp.route("/all-users/")
+def all_users():
+    users = User.query.all()
+    return render_template("head_admin/users_list.html", users=users)
+
+
+@h_admin_bp.route("/confirm-users/")
+def confirm_users():
+    users = User.query.filter(User.confirm == True).all()
+    return render_template("head_admin/users_list.html", users=users)
+
+
+@h_admin_bp.route("/non-confirm-users/")
+def non_confirm_users():
+    users = User.query.filter(User.confirm == False).all()
+    return render_template("head_admin/users_list.html", users=users)
+
+
+@h_admin_bp.route("/arrived-users/")
+def arrived_users():
+    users = User.query.filter(User.active_places).all()
+    return render_template("head_admin/users_list.html", users=users)
 
 
 @h_admin_bp.route("/add-users-from-excel/", methods=['POST'])
