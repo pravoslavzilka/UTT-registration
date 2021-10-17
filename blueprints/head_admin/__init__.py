@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from models import TicketTypeType, TicketType, Admin, User, Ticket
 import datetime
 from database import db_session
+import openpyxl
 
 h_admin_bp = Blueprint("h_admin_bp", __name__, template_folder="templates", static_folder="static")
 
@@ -95,3 +96,65 @@ def stats_piece(piece_id):
 
     return render_template("head_admin/stats_piece.html", tt=tt, confirmed_users=confirmed_users)
 
+
+@h_admin_bp.route("/add-users-from-excel/", methods=['POST'])
+def add_users_excel():
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+
+    if file:
+        wb_obj = openpyxl.load_workbook(file)
+        sheet_obj = wb_obj.active
+
+        try:
+            start_row = int(request.form["start-row"])
+            col_name = int(request.form["col-name"])
+            col_email = int(request.form["col-email"])
+            col_age = int(request.form["col-age"])
+            col_place = int(request.form["col-place"])
+            col_who = int(request.form["col-who"])
+            col_where = int(request.form["col-where"])
+            col_reg = int(request.form["col-reg"])
+            col_otp = int(request.form["col-otp"])
+
+            for i in range(start_row - 1, sheet_obj.max_row):
+                name = sheet_obj.cell(row=i + 1, column=col_name).value
+                email = sheet_obj.cell(row=i + 1, column=col_email).value
+                age = sheet_obj.cell(row=i + 1, column=col_age).value
+                place = sheet_obj.cell(row=i + 1, column=col_place).value
+                who = sheet_obj.cell(row=i + 1, column=col_who).value
+                where = sheet_obj.cell(row=i + 1, column=col_where).value
+                reg = sheet_obj.cell(row=i + 1, column=col_reg).value
+                otp = sheet_obj.cell(row=i + 1, column=col_otp).value
+
+                user = User(name, email)
+                user.age = age
+                user.city = place
+                user.otp = otp
+                user.who = who
+                user.where = where
+                user.confirm = False
+
+                db_session.add(user)
+
+                tt = TicketType.query.filter(TicketType.name == "TEDA #trnavská_veda").first()
+                ticket = Ticket(tt, user)
+                db_session.add(ticket)
+
+                if len(reg) > 30:
+                    tt2 = TicketType.query.filter(TicketType.name == "Diskuttujme o vzdelávaní").first()
+                    ticket2 = Ticket(tt2, user)
+                    db_session.add(ticket2)
+
+                db_session.commit()
+
+        except:
+            flash("Nastala chyba pri nahrávaní. Ujistite sa, či dáta z tabuľky nie su už v systéme", "danger")
+            return redirect(url_for("h_admin_bp.stats"))
+
+        flash("Uživatelia z execelu boli úspešne pridané", "success")
+        return redirect(url_for("h_admin_bp.stats"))
+
+    return redirect(url_for("h_admin_bp.stats"))
