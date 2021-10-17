@@ -162,9 +162,9 @@
                   </div>
                 </div>
                <div style="margin-top:20px;" class="d-flex justify-content-center">
-                    <a href="{{ url_for('email_ask_confirm') }}" class="btn btn-primary utilities-buttons">
-	                   Poslať potvrdzujúci email
-	                </a>
+                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#emailModal">
+                      Poslať potvrdzujúci email
+                    </button>
                    <button id="excel-book" style="margin-left:5px;" onclick="changeDiv('operation1')" class="btn btn-secondary utilities-buttons" type="button" data-toggle="modal" data-target="#excelModal">
 	                   Načítať excel
 	                </button>
@@ -336,6 +336,123 @@
         </div>
       </div>
     </div>
+
+
+    <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-labelledby="emailModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="emailModalLabel">Zaslať email neovereným userom</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Naozaj poslať všetkým neovereným userom email ?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušit</button>
+              <a href="{{ url_for('email_ask_confirm') }}" class="btn btn-primary utilities-buttons">Áno</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+            <div class="modal fade" id="excelWorModal" tabindex="-1" role="dialog" aria-labelledby="excelWorModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title" id="excelWorModalLabel">Nastavenia excelu</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+
+                        <form id="excel-wor-form"  action="{{ url_for('h_admin_bp.add_users_excel') }}" method="post" style="margin-top:10px;" enctype="multipart/form-data">
+                          <div class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numStart" data-tip="tooltip" data-placement="top" >Prvý Riadok</label>
+                            </div>
+                            <div class="col">
+                              <input id="numStart" type="number" name="start-row" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numName" data-tip="tooltip" data-placement="top" >Stĺpec Mena</label>
+                            </div>
+                            <div class="col">
+                              <input id="numName" name="col-name" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numEmail" data-tip="tooltip" data-placement="bottom" >Stĺpec Emailu</label>
+                            </div>
+                            <div class="col">
+                                <input id="numEmail" type="number" name="col-email" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numAge" data-tip="tooltip" data-placement="bottom" >Stĺpec Veku</label>
+                            </div>
+                            <div class="col">
+                                <input id="numAge" type="number" name="col-age" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numPlace" data-tip="tooltip" data-placement="bottom" >Stĺpec Miesta</label>
+                            </div>
+                            <div class="col">
+                                <input id="numPlace" type="number" name="col-place" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numWho" data-tip="tooltip" data-placement="bottom">Stĺpec Kto</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWho" type="number" name="col-who" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numReg" data-tip="tooltip" data-placement="bottom">Stĺpec Program</label>
+                            </div>
+                            <div class="col">
+                                <input id="numReg" type="number" name="col-reg" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numOTP" data-tip="tooltip" data-placement="bottom">Stĺpec OTP</label>
+                            </div>
+                            <div class="col">
+                                <input id="numOTP" type="number" name="col-otp" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+                          </div>
+                          <div style="padding-top:10px;" class="row">
+                            <div style="padding-top:5px;" class="col">
+                                <label for="numWhere" data-tip="tooltip" data-placement="bottom">Stĺpec Skade</label>
+                            </div>
+                            <div class="col">
+                                <input id="numWhere" type="number" name="col-where" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                            </div>
+
+                          </div>
+                          <div class="custom-file" style="margin-top:20px;">
+                            <input type="file" name="file" class="custom-file-input" id="customFile" required>
+                            <label class="custom-file-label" for="customFile">Vyber súbor</label>
+                          </div>
+                          <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
+                            Vyber platný súbor
+                          </div>
+
+                           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
+                        <button type="submit" class="btn btn-primary" form="excel-wor-form">Načítať</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
 
     <script>

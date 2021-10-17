@@ -85,7 +85,7 @@
                         {% for ticket in user.tickets %}
                             {% if ticket.ticket_type.ticket_type_type == ttt %}
 
-                                <div class="card" id="card{{ ttt.name }}" style="margin-top:10px;">
+                                <div class="card" id="card{{ ttt.id }}" style="margin-top:10px;">
                                   <div class="card-body">
                                     <div id="operation2{{ttt.name}}{{ ticket.id }}" style="display:none">
                                         <div class="col-2 d-none d-md-block">
@@ -177,33 +177,39 @@
                                       </div>
                                     </div>
                                </div>
-                                <div class="row d-none" id="button{{ ttt.name }}">
-                                    <div id="buttonToAdd{{ ttt.name }}" style="padding-top:10px;padding-left:30px;padding-bottom:10px;">
+                                <div class="row d-none" id="button{{ ttt.id }}">
+                                    <div id="buttonToAdd{{ ttt.id }}" style="padding-top:10px;padding-left:30px;padding-bottom:10px;">
                                         <a href="#" id="add-user" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-piece{{ ttt.id }}" aria-expanded="false" aria-controls="new-piece{{ttt.id}}">Pridať</a>
                                     </div>
                                 </div>
-                                <div class="row d-none" id="showNoneFree{{ ttt.name }}">
+                                <div class="row d-none" id="showNoneFree{{ ttt.id }}">
                                     <div style="padding-top:10px;padding-left:30px;">
                                         <p>Žiadne ďaľšie voľné miesta</p>
                                     </div>
                                 </div>
                                 <script>
-                                            if (document.getElementById("selectTTT{{ ttt.id }}").options[0]) {
+                                        var myEle = document.getElementById("card{{ ttt.id }}");
+
+                                        if (document.getElementById("selectTTT{{ ttt.id }}").options[0]) {
+
+                                        } else {
+                                            if(myEle){
 
                                             } else {
-                                                document.getElementById('buttonToAdd{{ ttt.name }}').style.display = 'none';
-                                                var elementSpecial = document.getElementById("showNoneFree{{ ttt.name }}");
+                                                var elementSpecial = document.getElementById("showNoneFree{{ ttt.id }}");
                                                 elementSpecial.classList.remove("d-none");
                                             }
+                                            document.getElementById('buttonToAdd{{ ttt.id }}').style.display = 'none';
+                                        }
 
-                                     var myEle = document.getElementById("card{{ ttt.name }}");
+
                                         if(myEle){
-                                            if (myEle.id === "cardPrednášky"){
-                                                var element = document.getElementById("button{{ ttt.name }}");
+                                            if (myEle.id === "card4"){
+                                                var element = document.getElementById("button{{ ttt.id }}");
                                                 element.classList.remove("d-none");
                                             }
                                         } else {
-                                            var element = document.getElementById("button{{ ttt.name }}");
+                                            var element = document.getElementById("button{{ ttt.id }}");
                                             element.classList.remove("d-none");
                                         }
                                 </script>

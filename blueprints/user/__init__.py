@@ -106,8 +106,8 @@ def confirm_user_fun(hash_user):
     db_session.commit()
 
     login_user(user)
-    flash("Vitajte vo svojom konte. Pred festivalom sa ujistite, že máte svoj QR kód s lístok na lestival stiahnutý", "success")
-    return redirect(url_for("user_bp.user_page"))
+    flash("Vitajte vo svojom konte. Pred festivalom sa ujistite, že máte svoj QR kód s lístkom na festival stiahnutý", "success")
+    return redirect(url_for("user_bp.user_page_after_reg"))
 
 
 @user_bp.route("/sign-in/", methods=['GET'])
@@ -150,8 +150,8 @@ def sign_out():
     logout_user()
     if "permit" in session:
         session.pop("permit")
-    flash("Boli ste odhlásený","success")
-    return redirect(url_for("main_page"))
+    flash("Boli ste odhlásený", "success")
+    return redirect(url_for("user_bp.sign_in_view"))
 
 
 @user_bp.route("/sign-up/", methods=['GET'])
