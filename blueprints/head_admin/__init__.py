@@ -158,3 +158,69 @@ def add_users_excel():
         return redirect(url_for("h_admin_bp.stats"))
 
     return redirect(url_for("h_admin_bp.stats"))
+
+
+@h_admin_bp.route("/add-users-from-excel-wor/", methods=['POST'])
+def add_users_excel_wor():
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+
+    if file:
+        wb_obj = openpyxl.load_workbook(file)
+        sheet_obj = wb_obj.active
+
+
+        start_row = int(request.form["start-row-w"])
+        col_name = int(request.form["col-name-w"])
+        col_email = int(request.form["col-email-w"])
+        col_age = int(request.form["col-age-w"])
+        col_place = int(request.form["col-place-w"])
+        col_who = int(request.form["col-who-w"])
+        col_wor_1 = int(request.form["col-w-1"])
+        col_wor_2 = int(request.form["col-w-2"])
+        col_wor_3 = int(request.form["col-w-3"])
+        col_otp = int(request.form["col-otp-w"])
+        col_where = int(request.form["col-where-w"])
+        for i in range(start_row - 1, sheet_obj.max_row):
+            email = sheet_obj.cell(row=i + 1, column=col_email).value
+            user = User.query.filter(User.email == email).first()
+            if not user:
+                name = sheet_obj.cell(row=i + 1, column=col_name).value
+                age = sheet_obj.cell(row=i + 1, column=col_age).value
+                place = sheet_obj.cell(row=i + 1, column=col_place).value
+                who = sheet_obj.cell(row=i + 1, column=col_who).value
+                where = sheet_obj.cell(row=i + 1, column=col_where).value
+                otp = sheet_obj.cell(row=i + 1, column=col_otp).value
+                user = User(name, email)
+                user.age = age
+                user.city = place
+                user.otp = otp
+                user.who = who
+                user.where = where
+                user.confirm = False
+                db_session.add(user)
+                db_session.commit()
+            wor1 = sheet_obj.cell(row=i + 1, column=col_wor_1).value
+            wor2 = sheet_obj.cell(row=i + 1, column=col_wor_2).value
+            wor3 = sheet_obj.cell(row=i + 1, column=col_wor_3).value
+
+            tt1 = TicketType.query.filter(TicketType.name == wor1).first()
+            if tt1:
+                ticket = Ticket(tt1, user)
+                db_session.add(ticket)
+            tt2 = TicketType.query.filter(TicketType.name == wor2).first()
+            if tt2:
+                ticket = Ticket(tt2, user)
+                db_session.add(ticket)
+            tt3 = TicketType.query.filter(TicketType.name == wor3).first()
+            if tt3:
+                ticket = Ticket(tt3, user)
+                db_session.add(ticket)
+            db_session.commit()
+
+        flash("Uživatelia z execelu boli úspešne pridané", "success")
+        return redirect(url_for("h_admin_bp.stats"))
+
+    return redirect(url_for("h_admin_bp.stats"))
