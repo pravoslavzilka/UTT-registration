@@ -24,7 +24,7 @@
 
   @media only screen and (max-width: 750px) {
     #reg-section {
-      margin-bottom:1100px;
+      margin-bottom:1300px;
     }
   }
 
@@ -168,7 +168,7 @@
                   <div class="form-check" style="margin-left:10px;font-size:17px;">
                     {% for tt in tts %}
                       {% if ((tt.ticket_type_type.name == "Ďaľší Program") and (tt.tickets | length < tt.max_cap)) %}
-                        <div>
+                        <div style="margin-top:10px;">
                           <input name="user-{{tt.id }}" id="{{ tt.name }}" class="form-check-input" type="checkbox">
                           <label class="form-check-label" for="{{ tt.name }}">
                              {{ tt.name }} ({{ tt.speaker }})
