@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, session
-from models import TicketTypeType, TicketType, Ticket
+from flask import Blueprint, render_template, redirect, url_for, session, flash
+from models import TicketTypeType, TicketType, Ticket, User
 from functools import wraps
+from database import db_session
 
 admin_bp = Blueprint("admin_bp", __name__, template_folder="templates", static_folder="static")
 
@@ -19,6 +20,21 @@ def check_admin(func):
 def check_tickets_view():
     ttts = TicketTypeType.query.all()
     return render_template("admin/tickets_check_menu.html", ttts=ttts)
+
+
+@admin_bp.route("/add-user-ticket/<user_hash>/<tt_id>/")
+@check_admin
+def add_tickets_fun(user_hash, tt_id):
+    tt = TicketType.query.filter(TicketType.id == tt_id).first()
+    u = User.query.filter(User.code == user_hash).first()
+    if tt and u:
+        tt.users.append(u)
+        db_session.commit()
+        flash("User bol schválený", "success")
+        return redirect(url_for("admin_bp.tickets_scan", tt_id=tt_id))
+
+    flash("User alebo program sa nenašiel", "danger")
+    return redirect(url_for("admin.check_tickets_view"))
 
 
 @admin_bp.route("/scan-tickets/<int:tt_id>/")
