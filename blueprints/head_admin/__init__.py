@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from models import TicketTypeType, TicketType, Admin, User, Ticket
+from functools import wraps
 import datetime
 from database import db_session
 import openpyxl
@@ -7,13 +8,25 @@ import openpyxl
 h_admin_bp = Blueprint("h_admin_bp", __name__, template_folder="templates", static_folder="static")
 
 
+def check_head_admin(func):
+    @wraps(func)
+    def inner(*args, **kwargs):
+        if "permit" in session:
+            if session["permit"] == 1:
+                return func(*args, **kwargs)
+        return redirect(url_for("admin_bp.check_tickets_view"))
+    return inner
+
+
 @h_admin_bp.route("/operations/")
+@check_head_admin
 def operations():
     ttts = TicketTypeType.query.all()
     return render_template("head_admin/head_operations.html", ttts=ttts)
 
 
 @h_admin_bp.route("/add-piece/", methods=['POST'])
+@check_head_admin
 def add_piece():
     name = request.form["piece-name"]
     speaker = request.form["piece-speaker"]
@@ -33,6 +46,7 @@ def add_piece():
 
 
 @h_admin_bp.route("/edit-piece/", methods=['POST'])
+@check_head_admin
 def edit_piece():
     name = request.form["piece-name"]
     speaker = request.form["piece-speaker"]
@@ -56,6 +70,7 @@ def edit_piece():
 
 
 @h_admin_bp.route("/delete-piece/<int:piece_id>/")
+@check_head_admin
 def delete_piece(piece_id):
     tt = TicketType.query.filter(TicketType.id == piece_id).first()
 
@@ -66,7 +81,8 @@ def delete_piece(piece_id):
     return redirect(url_for("h_admin_bp.stats"))
 
 
-@h_admin_bp.route('add-admin',methods=['POST'])
+@h_admin_bp.route('add-admin', methods=['POST'])
+@check_head_admin
 def add_admin():
     admin = Admin(request.form["admin-name"], request.form["admin-email"], 2)
     admin.set_password(request.form["admin-password"])
@@ -79,6 +95,7 @@ def add_admin():
 
 
 @h_admin_bp.route("/stats/")
+@check_head_admin
 def stats():
     non_confirm = len(User.query.filter(User.confirm == False).all())
     all_users = len(User.query.all())
@@ -90,6 +107,7 @@ def stats():
 
 
 @h_admin_bp.route("/stats/<int:piece_id>/")
+@check_head_admin
 def stats_piece(piece_id):
     tt = TicketType.query.filter(TicketType.id == piece_id).first()
     confirmed_users = "broken"
@@ -98,30 +116,35 @@ def stats_piece(piece_id):
 
 
 @h_admin_bp.route("/all-users/")
+@check_head_admin
 def all_users():
     users = User.query.all()
     return render_template("head_admin/users_list.html", users=users)
 
 
 @h_admin_bp.route("/confirm-users/")
+@check_head_admin
 def confirm_users():
     users = User.query.filter(User.confirm == True).all()
     return render_template("head_admin/users_list.html", users=users)
 
 
 @h_admin_bp.route("/non-confirm-users/")
+@check_head_admin
 def non_confirm_users():
     users = User.query.filter(User.confirm == False).all()
     return render_template("head_admin/users_list.html", users=users)
 
 
 @h_admin_bp.route("/arrived-users/")
+@check_head_admin
 def arrived_users():
     users = User.query.filter(User.active_places).all()
     return render_template("head_admin/users_list.html", users=users)
 
 
 @h_admin_bp.route("/add-users-from-excel/", methods=['POST'])
+@check_head_admin
 def add_users_excel():
     file = request.files['file']
     if file.filename == '':
@@ -185,6 +208,7 @@ def add_users_excel():
 
 
 @h_admin_bp.route("/add-users-from-excel-wor/", methods=['POST'])
+@check_head_admin
 def add_users_excel_wor():
     file = request.files['file']
     if file.filename == '':
@@ -248,3 +272,4 @@ def add_users_excel_wor():
         return redirect(url_for("h_admin_bp.stats"))
 
     return redirect(url_for("h_admin_bp.stats"))
+

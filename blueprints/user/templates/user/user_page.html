@@ -115,7 +115,7 @@
                                           <select style="margin-left:20px;" name="ticket-id" class="form-control" required>
                                               {% for tt in tts %}
                                                 {% if ((tt.ticket_type_type.name == ttt.name) and (tt.tickets | length < tt.max_cap)) %}
-                                                    <option value="{{ tt.id }}">{{ tt.name  }}</option>
+                                                    <option value="{{ tt.id }}">{{ tt.name  }}  ({{ tt.speaker }})</option>
                                                 {% endif %}
                                               {% endfor %}
                                           </select>
@@ -164,7 +164,7 @@
                                           <select id="selectTTT{{ ttt.id }}" name="ticket-id" class="form-control" required>
                                               {% for tt in tts %}
                                                 {% if ((tt.ticket_type_type.name == ttt.name) and (tt.tickets | length < tt.max_cap)) %}
-                                                    <option value="{{ tt.id }}">{{ tt.name  }}</option>
+                                                    <option value="{{ tt.id }}">{{ tt.name  }} ({{ tt.speaker }})</option>
                                                 {% endif %}
                                               {% endfor %}
                                           </select>

@@ -200,7 +200,7 @@
                                                         <strong class="text-muted">Speaker:</strong> {{ tt.speaker }}
                                                     </div>
                                                     <div>
-                                                        <strong class="text-muted">Počet:</strong> {{ tt.max_cap }}
+                                                        <strong class="text-muted">Počet:</strong> {{ tt.users | length }} / {{ tt.tickets | length }} / {{ tt.max_cap }}
                                                     </div>
                                                     <div>
                                                         <strong class="text-muted">Začiatok:</strong> {{ tt.start }}

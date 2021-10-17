@@ -8,6 +8,7 @@ user_bp = Blueprint("user_bp", __name__, template_folder="templates", static_fol
 
 
 @user_bp.route("/user-page/")
+@login_required
 def user_page():
     ttts = TicketTypeType.query.all()
     tts = TicketType.query.all()
@@ -15,6 +16,7 @@ def user_page():
 
 
 @user_bp.route("/user-page-ar/")
+@login_required
 def user_page_after_reg():
     ttts = TicketTypeType.query.all()
     tts = TicketType.query.all()
@@ -22,6 +24,7 @@ def user_page_after_reg():
 
 
 @user_bp.route("/add-ticket/", methods=['POST'])
+@login_required
 def add_ticket():
 
     ticket_id = request.form["ticket-id"]
@@ -41,6 +44,7 @@ def add_ticket():
 
 
 @user_bp.route("/change-ticket/", methods=['POST'])
+@login_required
 def change_ticket():
 
     ticket_id = request.form["ticket-id"]
@@ -66,6 +70,7 @@ def change_ticket():
 
 
 @user_bp.route("/delete-ticket/<int:ticket_id>/")
+@login_required
 def del_ticket(ticket_id):
     ticket = Ticket.query.filter(Ticket.id == ticket_id).first()
     db_session.delete(ticket)
@@ -75,6 +80,7 @@ def del_ticket(ticket_id):
 
 
 @user_bp.route("/change-profile/", methods=['POST'])
+@login_required
 def change_profile():
     current_user.name = request.form["user-name"]
     current_user.age = request.form["user-age"]
@@ -112,6 +118,8 @@ def confirm_user_fun(hash_user):
 
 @user_bp.route("/sign-in/", methods=['GET'])
 def sign_in_view():
+    if current_user.is_authenticated:
+        return redirect(url_for("user_bp.user_page"))
     return render_template("user/sign_in.html")
 
 
