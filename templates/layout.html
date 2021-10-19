@@ -57,7 +57,7 @@
 	      				<a id="ticket-control" class="nav-link" href="{{ url_for('admin_bp.check_tickets_view') }}">Kontrola lístkov</a>
 	        		</li>
 			  		<li class="links-items nav-item">
-						<a class="nav-link" href="#">Registrácia</a>
+						<a id="registration" class="nav-link" href="{{ url_for('admin_bp.admin_sign_up') }}">Registrácia</a>
 	        		</li>
 			  		{% if session["permit"] == 1 %}
 						<li class="links-items nav-item">

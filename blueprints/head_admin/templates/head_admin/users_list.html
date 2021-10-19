@@ -88,7 +88,7 @@
                       <td>Áno</td>
                       <td>{{ user.confirm }}</td>
                       <td>
-                          <button class="btn btn-sm btn-info">Zobraziť</button>
+                          <a href="{{ url_for('admin_bp.admin_user_page', user_id=user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
                       </td>
                     </tr>
                 {% elif user.confirm %}
@@ -99,7 +99,7 @@
                       <td>Nie</td>
                       <td>Potvrdený</td>
                       <td>
-                          <button class="btn btn-sm btn-info">Zobraziť</button>
+                          <a href="{{ url_for('admin_bp.admin_user_page', user_id=user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
                       </td>
                     </tr>
                 {% else %}
@@ -110,7 +110,7 @@
                       <td>Nie</td>
                       <td>Nepotvrdený</td>
                       <td>
-                          <button class="btn btn-sm btn-info">Zobraziť</button>
+                          <a href="{{ url_for('admin_bp.admin_user_page', user_id=user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
                       </td>
                     </tr>
                 {% endif %}

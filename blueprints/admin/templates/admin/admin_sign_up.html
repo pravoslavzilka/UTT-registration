@@ -1,0 +1,245 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Admin registrácia
+{% endblock title %}
+
+
+{% block content %}
+
+<style>
+
+  .card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: .60em;
+    padding-right: .60em;
+  }
+  .card-registration .select-arrow {
+    top: 13px;
+  }
+  #reg-section {
+    margin-bottom:700px;
+  }
+
+  @media only screen and (max-width: 750px) {
+    #reg-section {
+      margin-bottom:1300px;
+    }
+  }
+
+</style>
+
+<section class="vh-100 gradient-custom" id="reg-section">
+  <div class="container py-5 h-100">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-12 col-lg-10 col-xl-10">
+        <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+          <div class="card-body p-4 p-md-5">
+            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Registrácia na Festival Učiaca sa Trnava</h3>
+            <form class="needs-validation" method="post" action="{{ url_for('admin_bp.sign_up_fun') }}" novalidate>
+              <div class="form-group">
+                  <h4>Osobné údaje:</h4>
+                </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputName">Celé Meno</label>
+                  <input type="text" name="user-name" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" class="form-control" id="inputName" placeholder="Celé Meno" required>
+                  <div class="invalid-feedback">
+                    Zadajte celé platné meno
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="inputAge">Vek</label>
+                  <input type="number" name="user-age" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="3" class="form-control" id="inputAge"  placeholder="Vek" required>
+                    <div class="invalid-feedback">
+                        Zadajte platný vek
+                      </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputEmail4">Email</label>
+                  <input type="email" name="user-email" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" class="form-control" id="inputEmail4" placeholder="Email" required>
+                   <div class="invalid-feedback">
+                    Zadajte platný email
+                  </div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="userPassword">Heslo</label>
+                  <input type="password" name="user-password" class="form-control" id="userPassword" minlength="8" maxlength="30" placeholder="Heslo" required>
+                  <div class="invalid-feedback">
+                    Vytvorte si aspoň 8 miestne heslo
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group col-md-6">
+                      <label for="inputLoc">Miesto Bydliska</label>
+                      <input type="text" name="user-city" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="20" class="form-control" id="inputLoc" placeholder="Mesto" required>
+                       <div class="invalid-feedback">
+                        Zadajte platné miesto bydliska
+                      </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label for="inputPer">V čase festivalu budem</label>
+                      <select name="user-otp" class="form-control" id="inputPer" required>
+                        <option>očkovaný proti ochoreniu COVID a budem to vedieť preukázať.</option>
+                        <option>testovaný na ochorenie COVID a budem to vedieť preukázať.</option>
+                        <option>mať prekonané ochorenie COVID pred menej než 180 dňami a budem to vedieť preukázať.</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                      <label for="inputPer">Kto si</label>
+                      <select name="user-who" class="form-control" id="inputPer" required>
+                        <option>Žiak ZŠ</option>
+                        <option>Študent SŠ</option>
+                        <option>Študent VŠ</option>
+                        <option>Pracujúci</option>
+                        <option>Učiteľ</option>
+                        <option>Matka na materskej dovolenke</option>
+                        <option>Dôchodca</option>
+                        <option>Iné</option>
+                      </select>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label for="inputPer">Odkiaľ si sa o festivale dozvedel</label>
+                      <select name="user-where" class="form-control" id="inputPer" required>
+                        <option>Sociálne siete</option>
+                        <option>Webová stránka festivalu</option>
+                        <option>Škola</option>
+                        <option>Plagáty, citylighty</option>
+                        <option>Reklama v autobuse</option>
+                        <option>Iné</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="form-group" style="margin-top:35px;margin-bottom:30px;">
+                <h4>Vyberte si program:</h4>
+              </div>
+              <div class="form-group" >
+                <h5><strong style="color:grey;">Workshopy:</strong></h5>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputEmail4">I. BLOK (13:00 - 14:30)</label>
+                  <select name="user-block1" class="form-control" required>
+                    <option>Žiadny</option>
+                    {% for tt in tts %}
+                      {% if ((tt.ticket_type_type.name == "Workshop I. BLOK") and (tt.tickets | length < tt.max_cap)) %}
+                        <option value="{{ tt.name }}">{{ tt.name }} ({{ tt.speaker }})</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="inputPassword4">II. BLOK (15:00 - 16:30)</label>
+                  <select name="user-block2" class="form-control" required>
+                    <option>Žiadny</option>
+                    {% for tt in tts %}
+                      {% if ((tt.ticket_type_type.name == "Workshop II. BLOK") and (tt.tickets | length < tt.max_cap)) %}
+                        <option value="{{ tt.name }}">{{ tt.name }} ({{ tt.speaker }})</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="inputEmail4">III. BLOK (17:00 - 18:30)</label>
+                  <select name="user-block3" class="form-control" required>
+                    <option>Žiadny</option>
+                    {% for tt in tts %}
+                      {% if ((tt.ticket_type_type.name == "Workshop III. BLOK") and (tt.tickets | length < tt.max_cap)) %}
+                        <option value="{{ tt.name }}">{{ tt.name }} ({{ tt.speaker }})</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="form-group" >
+                <h5 style="padding-top:20px; color:grey;"><strong>Ďaľší Program:</strong></h5>
+              </div>
+               <div class="form-row">
+                <div class="form-group col-md-6">
+                  <div class="form-check" style="margin-left:10px;font-size:17px;">
+                    {% for tt in tts %}
+                      {% if ((tt.ticket_type_type.name == "Ďaľší Program") and (tt.tickets | length < tt.max_cap)) %}
+                        <div style="margin-top:10px;">
+                          <input name="user-{{tt.id }}" id="{{ tt.name }}" class="form-check-input" type="checkbox">
+                          <label class="form-check-label" for="{{ tt.name }}">
+                             {{ tt.name }} ({{ tt.speaker }})
+                          </label>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+               </div>
+              <div class="form-group" style="margin-top:40px;">
+                <div class="form-check">
+                  <input name="user-accept" class="form-check-input" type="checkbox" id="accept-terms" required>
+                  <label class="form-check-label" for="accept-terms">
+                    Súhlasím so spracovaním údajov <a  data-toggle="collapse" href="#moreInfo" role="button" aria-expanded="false" aria-controls="moreInfo">viac info</a>
+                  </label>
+                  <div class="invalid-feedback">
+                    Na spracovanie registrácie potrebujeme váš súhlas
+                  </div>
+                  <div style="margin-top:10px;margin-bottom:10px;" class="collapse" id="moreInfo">
+                    <div class="card card-body">
+                      V súlade s nariadením Európskeho parlamentu a Rady (EÚ) 2016/679 a so zákonom č. 18/2018 Z.z. o ochrane osobných údajov a o zmene a doplnení niektorých zákonov dobrovoľne udeľujem súhlas so spracúvaním mojich osobných údajov v rozsahu mnou poskytnutých osobných údajov organizácii Občianske združenie Lifestarter. Ľ. Podjavorinskej 20, 917 01 Trnava; IČO: 50718274;. Odoslaním formulára zároveň potvrdzujem, že som sa oboznámil/-a s informáciami o spracúvaní a ochrane osobných údajov, dostupných na https://lifestarter.sk/wp-content/uploads/2020/06/Ochrana-osobných-údajov-občianske-združenie.pdf
+                    </div>
+                  </div>
+                </div>
+                <div class="form-check" style="padding-top:10px;">
+                  <input name="user-news" class="form-check-input" type="checkbox" id="news">
+                  <label class="form-check-label" for="news">
+                    Chcem dostávať newsletter s aktuálnymi pozvánkami a informáciami
+                  </label>
+                </div>
+              </div>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button type="submit" class="btn btn-primary">Zaregistrovať sa </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+
+    function generatePassword() {
+        var length = 12,
+            charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+            retVal = "";
+        for (var i = 0, n = charset.length; i < length; ++i) {
+            retVal += charset.charAt(Math.floor(Math.random() * n));
+        }
+        return retVal;
+    }
+    document.getElementById("userPassword").value = generatePassword();
+</script>
+
+{% endblock content %}
