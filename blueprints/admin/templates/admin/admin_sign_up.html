@@ -1,11 +1,19 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Zaregistrujte sa na festival Učiaca sa Trnava
+    Admin registrácia
 {% endblock title %}
 
 
 {% block content %}
+
+
+<script>
+		$(document).ready(function(){
+  		 	$(".active").removeClass("active");
+  		 	$("#registration").addClass("active");
+		});
+	</script>
 
 <style>
 
@@ -30,6 +38,11 @@
 
 </style>
 
+<div style="margin-top:30px;" class="d-flex justify-content-center">
+     <a href="{{ url_for('admin_bp.all_users') }}" type="button" class="btn btn-primary" >Zobraziť zoznam</a>
+     <button type="button" style="margin-left:10px;" class="btn btn-primary" data-toggle="modal" data-target="#showOccupancy">Obsadenosť</button>
+</div>
+
 <section class="vh-100 gradient-custom" id="reg-section">
   <div class="container py-5 h-100">
     <div class="row justify-content-center align-items-center h-100">
@@ -37,7 +50,7 @@
         <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
           <div class="card-body p-4 p-md-5">
             <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Registrácia na Festival Učiaca sa Trnava</h3>
-            <form class="needs-validation" method="post" action="{{ url_for('user_bp.sign_up_fun') }}" novalidate>
+            <form class="needs-validation" method="post" action="{{ url_for('admin_bp.sign_up_fun') }}" novalidate>
               <div class="form-group">
                   <h4>Osobné údaje:</h4>
                 </div>
@@ -66,8 +79,8 @@
                   </div>
                 </div>
                 <div class="form-group col-md-6">
-                  <label for="inputPassword4">Vytvor si heslo</label>
-                  <input type="password" name="user-password" class="form-control" id="inputPassword4" minlength="8" maxlength="30" placeholder="Heslo" required>
+                  <label for="userPassword">Heslo</label>
+                  <input type="password" name="user-password" class="form-control" id="userPassword" minlength="8" maxlength="30" placeholder="Heslo" required>
                   <div class="invalid-feedback">
                     Vytvorte si aspoň 8 miestne heslo
                   </div>
@@ -92,8 +105,8 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                      <label for="inputWho">Kto si</label>
-                      <select id="inputWho" name="user-who" class="form-control" required>
+                      <label for="inputPer">Kto si</label>
+                      <select name="user-who" class="form-control" id="inputPer" required>
                         <option>Žiak ZŠ</option>
                         <option>Študent SŠ</option>
                         <option>Študent VŠ</option>
@@ -105,8 +118,8 @@
                       </select>
                   </div>
                   <div class="form-group col-md-6">
-                      <label for="inputWhere">Odkiaľ si sa o festivale dozvedel</label>
-                      <select id="inputWhere" name="user-where" class="form-control" required>
+                      <label for="inputPer">Odkiaľ si sa o festivale dozvedel</label>
+                      <select name="user-where" class="form-control" id="inputPer" required>
                         <option>Sociálne siete</option>
                         <option>Webová stránka festivalu</option>
                         <option>Škola</option>
@@ -124,8 +137,8 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="inputWor1">I. BLOK (13:00 - 14:30)</label>
-                  <select id="inputWor1" name="user-block1" class="form-control" required>
+                  <label for="inputEmail4">I. BLOK (13:00 - 14:30)</label>
+                  <select name="user-block1" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
                       {% if ((tt.ticket_type_type.name == "Workshop I. BLOK") and (tt.tickets | length < tt.max_cap)) %}
@@ -136,8 +149,8 @@
 
                 </div>
                 <div class="form-group col-md-6">
-                  <label for="inputWor2">II. BLOK (15:00 - 16:30)</label>
-                  <select id="inputWor2" name="user-block2" class="form-control" required>
+                  <label for="inputPassword4">II. BLOK (15:00 - 16:30)</label>
+                  <select name="user-block2" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
                       {% if ((tt.ticket_type_type.name == "Workshop II. BLOK") and (tt.tickets | length < tt.max_cap)) %}
@@ -149,8 +162,8 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="inputWor3">III. BLOK (17:00 - 18:30)</label>
-                  <select id="inputWor3" name="user-block3" class="form-control" required>
+                  <label for="inputEmail4">III. BLOK (17:00 - 18:30)</label>
+                  <select name="user-block3" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
                       {% if ((tt.ticket_type_type.name == "Workshop III. BLOK") and (tt.tickets | length < tt.max_cap)) %}
@@ -211,6 +224,38 @@
   </div>
 </section>
 
+    <div class="modal fade" id="showOccupancy" tabindex="-1" role="dialog" aria-labelledby="showOccupancyTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header d-block">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title text-center" id="showOccupancyTitle">Obsadenosť</h5>
+
+          </div>
+          <div class="modal-body ">
+            <h6><strong>Obsadenosť programu:</strong></h6>
+            <ul style="padding-top:10px;">
+                {% for tt in tts %}
+                    <li style="margin-top:10px;" class="card">
+                      <div class="card-body">
+                        <strong>{{ tt.name }}</strong>
+                        <div>
+                          {{ tt.tickets | length }} / {{ tt.max_cap }}
+                        </div>
+                      </div>
+                    </li>
+                {% endfor %}
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 <script>
     (function() {
       'use strict';
@@ -229,6 +274,17 @@
         });
       }, false);
     })();
+
+    function generatePassword() {
+        var length = 12,
+            charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+            retVal = "";
+        for (var i = 0, n = charset.length; i < length; ++i) {
+            retVal += charset.charAt(Math.floor(Math.random() * n));
+        }
+        return retVal;
+    }
+    document.getElementById("userPassword").value = generatePassword();
 </script>
 
 {% endblock content %}

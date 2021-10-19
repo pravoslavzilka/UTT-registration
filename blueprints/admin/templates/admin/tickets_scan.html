@@ -129,13 +129,22 @@
         if (users_list.indexOf(res) >= 0) {
           outputDataS.innerText = "Vstupenka bola overená";
           qrResultS.hidden = false;
+          window.location.href = '/admin/add-user-ticket/' + res + '/{{ tt.id }}/';
 
         } else {
           outputDataD.innerText = "Skús reloadnúť stránku";
           qrResultD.hidden = false;
 
         }
-        setTimeout( function() {scanAgain();}, 1000);
+        scanning = false;
+
+        video.srcObject.getTracks().forEach(track => {
+          track.stop();
+        });
+
+        btnScanQR.hidden = false;
+        btnStopQR.hidden = true;
+        canvasElement.hidden = true;
 
       }
     };
