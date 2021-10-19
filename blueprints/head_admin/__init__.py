@@ -129,6 +129,20 @@ def confirm_users():
     return render_template("head_admin/users_list.html", users=users)
 
 
+@h_admin_bp.route("/delete-non-confirm-users/")
+@check_head_admin
+def delete_non_confirm_users():
+    users = User.query.filter(User.confirm == False).all()
+    for user in users:
+        for ticket in user.tickets:
+            db_session.delete(ticket)
+        db_session.delete(user)
+    db_session.commit()
+
+    flash("Non confirm users boli vymazaný", "success")
+    return redirect(url_for("h_admin_bp.stats"))
+
+
 @h_admin_bp.route("/non-confirm-users/")
 @check_head_admin
 def non_confirm_users():
