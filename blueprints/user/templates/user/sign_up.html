@@ -92,8 +92,8 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                      <label for="inputPer">Kto si</label>
-                      <select name="user-who" class="form-control" id="inputPer" required>
+                      <label for="inputWho">Kto si</label>
+                      <select id="inputWho" name="user-who" class="form-control" required>
                         <option>Žiak ZŠ</option>
                         <option>Študent SŠ</option>
                         <option>Študent VŠ</option>
@@ -105,8 +105,8 @@
                       </select>
                   </div>
                   <div class="form-group col-md-6">
-                      <label for="inputPer">Odkiaľ si sa o festivale dozvedel</label>
-                      <select name="user-where" class="form-control" id="inputPer" required>
+                      <label for="inputWhere">Odkiaľ si sa o festivale dozvedel</label>
+                      <select id="inputWhere" name="user-where" class="form-control" required>
                         <option>Sociálne siete</option>
                         <option>Webová stránka festivalu</option>
                         <option>Škola</option>
@@ -124,8 +124,8 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="inputEmail4">I. BLOK (13:00 - 14:30)</label>
-                  <select name="user-block1" class="form-control" required>
+                  <label for="inputWor1">I. BLOK (13:00 - 14:30)</label>
+                  <select id="inputWor1" name="user-block1" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
                       {% if ((tt.ticket_type_type.name == "Workshop I. BLOK") and (tt.tickets | length < tt.max_cap)) %}
@@ -136,8 +136,8 @@
 
                 </div>
                 <div class="form-group col-md-6">
-                  <label for="inputPassword4">II. BLOK (15:00 - 16:30)</label>
-                  <select name="user-block2" class="form-control" required>
+                  <label for="inputWor2">II. BLOK (15:00 - 16:30)</label>
+                  <select id="inputWor2" name="user-block2" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
                       {% if ((tt.ticket_type_type.name == "Workshop II. BLOK") and (tt.tickets | length < tt.max_cap)) %}
@@ -149,8 +149,8 @@
               </div>
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="inputEmail4">III. BLOK (17:00 - 18:30)</label>
-                  <select name="user-block3" class="form-control" required>
+                  <label for="inputWor3">III. BLOK (17:00 - 18:30)</label>
+                  <select id="inputWor3" name="user-block3" class="form-control" required>
                     <option>Žiadny</option>
                     {% for tt in tts %}
                       {% if ((tt.ticket_type_type.name == "Workshop III. BLOK") and (tt.tickets | length < tt.max_cap)) %}
