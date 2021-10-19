@@ -78,6 +78,13 @@ def admin_sign_up():
     return render_template("admin/admin_sign_up.html", tts=tts)
 
 
+@admin_bp.route("/all-users/")
+@check_admin
+def all_users():
+    users = User.query.all()
+    return render_template("admin/users_list.html", users=users)
+
+
 @admin_bp.route("/public-sign-up/", methods=['POST'])
 @check_admin
 def sign_up_fun():
