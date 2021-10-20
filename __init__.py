@@ -7,8 +7,9 @@ from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail, Message
 from threading import Thread
-from models import User, Admin
+from models import User, Admin, TicketType
 import os
+import uuid
 
 
 UPLOAD_FOLDER = '/static/files'
@@ -68,6 +69,19 @@ def send_reg_email(email):
     Thread(target=send_email, args=(app, msg)).start()
 
     return redirect(url_for("user_bp.user_page_after_reg"))
+
+
+@app.route("/email-apology/")
+def email_apology():
+    tt = TicketType.query.filter(TicketType.name == "Hurá von! Učíme (sa) vonku").first()
+    users = [ticket.user for ticket in tt.tickets]
+    for user in users:
+        msg = Message(sender="registracia@uciacasatrnava.sk")
+        msg.subject = "Zrušenie časti programu"
+        msg.recipients = [user.email]
+        msg.html = render_template("emails/cancel-email.html")
+        Thread(target=send_email, args=(app, msg)).start()
+    return redirect(url_for("h_admin_bp.stats"))
 
 
 @app.route("/email-ask-confirm/")
