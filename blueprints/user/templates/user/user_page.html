@@ -78,7 +78,10 @@
             <div id="book-list" style="" class="user-tickets col-md-8 col-lg-8 col-sm-12 col-xs-12">
                 <div  id="book-list2">
                 </div>
-                <h4 style="padding-top:20px;" class="text-strong"><strong>Tvoj Program:</strong></h4>
+                <div class="alert alert-info" role="alert">
+                  Počas dňa festivalu nebude možné meniť svoj program.
+                </div>
+                <h4 style="padding-top:0px;" class="text-strong"><strong>Tvoj Program:</strong></h4>
                 <div>
                     {% for ttt in ttts %}
                         <h5 style="margin-top:40px;" class="text-muted">{{ ttt.name }}:</h5>
