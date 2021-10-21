@@ -161,7 +161,7 @@ def sign_out():
 
 @user_bp.route("/sign-up/", methods=['GET'])
 def sign_up_view():
-    flash("Online registrácie bola uzatvorená, ak chcete prísť na program, môžete sa registrovať na mieste",
+    flash("Online registrácia bola uzatvorená, ak chcete prísť na program, môžete sa registrovať na mieste",
           "info")
     return redirect(url_for("user_bp.sign_in_view"))
 
