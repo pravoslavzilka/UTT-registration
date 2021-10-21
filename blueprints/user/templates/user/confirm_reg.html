@@ -156,7 +156,7 @@
               <h5 class="card-title text-center">Potvrď svoju registráciu vytvorením hesla:</h5>
               <form class="form-signin needs-validation" method="post" action="{{ url_for('user_bp.confirm_user_fun',hash_user=user.code) }}" novalidate>
                 <div class="form-label-group">
-                  <input type="email" id="inputEmail" value="{{ user.email }}" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="25" name="user-email" class="form-control" placeholder="Email address" required autofocus>
+                  <input type="email" id="inputEmail" value="{{ user.email }}" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="user-email" class="form-control" placeholder="Email address" required autofocus>
                   <div style="margin-left:10px;" class="invalid-feedback">
                     Zadajte platný email
                   </div>

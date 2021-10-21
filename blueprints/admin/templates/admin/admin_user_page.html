@@ -1,7 +1,7 @@
 {% extends "layout.html"%}
 
 {% block title %}
-    Konot usera {{ user.name }}
+    Konto usera {{ user.name }}
 {% endblock title%}
 
 {% block head %}
@@ -108,14 +108,14 @@
                                             <div class="row">
                                                 <div class="col">
                                                     <button type="button" onclick="showCardTicket('operation1{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zmeniť</button>
-                                                    <a href="{{ url_for('user_bp.del_ticket',ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
+                                                    <a href="{{ url_for('admin_bp.del_ticket', user_id=user.id,ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
                                                 </div>
                                             </div>
 
                                         </div>
                                     </div>
                                     <div id="operation1{{ttt.name}}{{ ticket.id }}" style="display:none">
-                                        <form class="form-inline" action="{{ url_for('user_bp.change_ticket') }}" method="post">
+                                        <form class="form-inline" action="{{ url_for('admin_bp.change_ticket', user_id=user.id) }}" method="post">
                                           <select style="margin-left:20px;" name="ticket-id" class="form-control" required>
                                               {% for tt in tts %}
                                                 {% if ((tt.ticket_type_type.name == ttt.name) and (tt.tickets | length < tt.max_cap)) %}
@@ -149,7 +149,7 @@
                                             <div class="row">
                                                 <div class="col">
                                                     <button type="button" onclick="showCardTicket('operation1{{ttt.name}}{{ ticket.id }}', 'main_place{{ttt.name}}{{ ticket.id }}')" class="btn btn-secondary">Zmeniť</button>
-                                                    <a href="{{ url_for('user_bp.del_ticket',ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
+                                                    <a href="{{ url_for('admin_bp.del_ticket',user_id=user.id, ticket_id=ticket.id) }}" type="button" style="margin-top:5px;" class="btn btn-danger">Odstrániť</a>
                                                 </div>
                                             </div>
 
@@ -164,7 +164,7 @@
                         <div class="row">
                                     <div class="collapse col-12 new-piece" style="padding-top:10px;" id="new-piece{{ ttt.id }}">
                                       <div class="card card-body w-75">
-                                        <form class="form-inline" action="{{ url_for('user_bp.add_ticket') }}" method="post">
+                                        <form class="form-inline" action="{{ url_for('admin_bp.add_ticket', user_id=user.id) }}" method="post">
                                           <select id="selectTTT{{ ttt.id }}" name="ticket-id" class="form-control" required>
                                               {% for tt in tts %}
                                                 {% if ((tt.ticket_type_type.name == ttt.name) and (tt.tickets | length < tt.max_cap)) %}
@@ -235,7 +235,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form class="needs-validation" id="userSettings" action="{{ url_for('user_bp.change_profile') }}" method="post" novalidate>
+            <form class="needs-validation" id="userSettings" action="{{ url_for('admin_bp.change_profile', user_id=user.id) }}" method="post" novalidate>
               <div class="form-group">
                 <label >Meno:</label>
                 <input type="text" name="user-name" class="form-control" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="30" value="{{ user.name }}" required>

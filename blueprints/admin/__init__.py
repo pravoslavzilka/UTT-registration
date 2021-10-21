@@ -60,6 +60,79 @@ def admin_user_page(user_id):
     return render_template("admin/admin_user_page.html", user=user, tts=tts, ttts=ttts)
 
 
+@admin_bp.route("/user-add-ticket/<int:user_id>/", methods=['POST'])
+@check_admin
+def add_ticket(user_id):
+
+    ticket_id = request.form["ticket-id"]
+    tt = TicketType.query.filter(TicketType.id == ticket_id).first()
+    current_user = User.query.filter(User.id == user_id).first()
+
+    already_ticket = Ticket.query.filter(Ticket.user == current_user, Ticket.ticket_type == tt).first()
+
+    if tt and len(tt.tickets) < tt.max_cap and not already_ticket:
+        ticket = Ticket(tt, current_user)
+        db_session.add(ticket)
+        db_session.commit()
+        flash(f"'{tt.name}' bol pridaný do lístku", "success")
+    else:
+        flash("Na tento program už má rezervovaný lístok", "info")
+
+    return redirect(url_for("admin_bp.admin_user_page", user_id=user_id))
+
+
+@admin_bp.route("/user-change-ticket/<int:user_id>/", methods=['POST'])
+@check_admin
+def change_ticket(user_id):
+
+    current_user = User.query.filter(User.id == user_id).first()
+
+    ticket_id = request.form["ticket-id"]
+    original_id = int(request.form["original-ticket"])
+
+    original_ticket = Ticket.query.filter(Ticket.id == original_id).first()
+    if original_ticket in current_user.tickets:
+
+        tt = TicketType.query.filter(TicketType.id == ticket_id).first()
+
+        already_ticket = Ticket.query.filter(Ticket.user == current_user, Ticket.ticket_type == tt).first()
+
+        if tt and len(tt.tickets) < tt.max_cap and not already_ticket:
+            ticket = Ticket(tt, current_user)
+            db_session.add(ticket)
+            db_session.delete(original_ticket)
+            db_session.commit()
+            flash(f"'{tt.name}' bol pridaný do lístku", "success")
+        else:
+            flash("Na tento program už má rezervovaný lístok", "info")
+
+    return redirect(url_for("admin_bp.admin_user_page", user_id=user_id))
+
+
+@admin_bp.route("/user-delete-ticket/<int:user_id>/<int:ticket_id>/")
+@check_admin
+def del_ticket(user_id, ticket_id):
+    ticket = Ticket.query.filter(Ticket.id == ticket_id).first()
+    db_session.delete(ticket)
+    db_session.commit()
+
+    return redirect(url_for("admin_bp.admin_user_page", user_id=user_id))
+
+
+@admin_bp.route("/user-change-profile/<int:user_id>/", methods=['POST'])
+@check_admin
+def change_profile(user_id):
+    current_user = User.query.filter(User.id == user_id).first()
+    current_user.name = request.form["user-name"]
+    current_user.age = request.form["user-age"]
+    current_user.email = request.form["user-email"]
+    current_user.city = request.form["user-city"]
+
+    db_session.commit()
+    flash("Profil bol úspešne upravený", "success")
+    return redirect(url_for("admin_bp.admin_user_page", user_id=user_id))
+
+
 @admin_bp.route("/delete-user/<int:user_id>/")
 @check_admin
 def delete_user(user_id):
