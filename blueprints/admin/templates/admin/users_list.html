@@ -73,8 +73,8 @@
               <th scope="col">#</th>
               <th scope="col">Meno</th>
               <th scope="col">Email</th>
-              <th scope="col">Prišiel</th>
-              <th scope="col">Potvrdený</th>
+              <th scope="col">Vek</th>
+              <th scope="col">OTP</th>
               <th scope="col">Zobraziť</th>
             </tr>
           </thead>
@@ -85,8 +85,16 @@
                       <th scope="row">{{ user.id }}</th>
                       <td class="search-term">{{ user.name }}</td>
                       <td>{{  user.email }}</td>
-                      <td>Áno</td>
-                      <td>{{ user.confirm }}</td>
+                      <td>{{  user.age }}</td>
+                      <td>
+                          {% if user.otp == "očkovaný proti ochoreniu COVID a budem to vedieť preukázať."%}
+                            O
+                          {% elif user.otp == "testovaný na ochorenie COVID a budem to vedieť preukázať." %}
+                            T
+                          {% else %}
+                            P
+                          {% endif %}
+                      </td>
                       <td>
                           <a href="{{ url_for('admin_bp.admin_user_page', user_id=user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
                       </td>
@@ -96,8 +104,16 @@
                       <th scope="row">{{ user.id }}</th>
                       <td class="search-term">{{ user.name }}</td>
                       <td>{{  user.email }}</td>
-                      <td>Nie</td>
-                      <td>Potvrdený</td>
+                      <td>{{  user.age }}</td>
+                      <td>
+                          {% if user.otp == "očkovaný proti ochoreniu COVID a budem to vedieť preukázať."%}
+                            O
+                          {% elif user.otp == "testovaný na ochorenie COVID a budem to vedieť preukázať." %}
+                            T
+                          {% else %}
+                            P
+                          {% endif %}
+                      </td>
                       <td>
                           <a href="{{ url_for('admin_bp.admin_user_page', user_id=user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
                       </td>
@@ -107,8 +123,16 @@
                       <th scope="row">{{ user.id }}</th>
                       <td class="search-term">{{ user.name }}</td>
                       <td>{{  user.email }}</td>
-                      <td>Nie</td>
-                      <td>Nepotvrdený</td>
+                      <td>{{  user.age }}</td>
+                      <td>
+                          {% if user.otp == "očkovaný proti ochoreniu COVID a budem to vedieť preukázať."%}
+                            O
+                          {% elif user.otp == "testovaný na ochorenie COVID a budem to vedieť preukázať." %}
+                            T
+                          {% else %}
+                            P
+                          {% endif %}
+                      </td>
                       <td>
                           <a href="{{ url_for('admin_bp.admin_user_page', user_id=user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
                       </td>
