@@ -15,15 +15,15 @@ def user_page():
     return render_template("user/user_page.html",  tts=tts, ttts=ttts, user=current_user)
 
 
-@user_bp.route("/user-page-ar/")
+'''@user_bp.route("/user-page-ar/")
 @login_required
 def user_page_after_reg():
     ttts = TicketTypeType.query.all()
     tts = TicketType.query.all()
-    return render_template("user/user_page.html", tts=tts, ttts=ttts, user=current_user, after_reg=True)
+    return render_template("user/user_page.html", tts=tts, ttts=ttts, user=current_user, after_reg=True)'''
 
 
-@user_bp.route("/add-ticket/", methods=['POST'])
+'''@user_bp.route("/add-ticket/", methods=['POST'])
 @login_required
 def add_ticket():
 
@@ -89,20 +89,17 @@ def change_profile():
 
     db_session.commit()
     flash("Profil bol úspešne upravený", "success")
-    return redirect(url_for("user_bp.user_page"))
+    return redirect(url_for("user_bp.user_page"))'''
 
 
 @user_bp.route("/confirm-user/<hash_user>/", methods=['GET'])
 def confirm_user_view(hash_user):
-    user = User.query.filter(User.code == hash_user).first()
-    if user.confirm:
-        return redirect(url_for("user_bp.user_page"))
 
-    flash("Na potvrdenie registrácie si vytvorte heslo do vášho konta", "info")
-    return render_template("user/confirm_reg.html", user=user)
+    flash("Potvrdenie registrácie vypršalo, ak chcete prísť na program, môžete sa registrovať na mieste", "info")
+    return redirect(url_for("user_bp.sign_in_view"))
 
 
-@user_bp.route("/confirm-user/<hash_user>/", methods=['POST'])
+'''@user_bp.route("/confirm-user/<hash_user>/", methods=['POST'])
 def confirm_user_fun(hash_user):
     user = User.query.filter(User.code == hash_user).first()
 
@@ -113,7 +110,7 @@ def confirm_user_fun(hash_user):
 
     login_user(user)
     flash("Vitajte vo svojom konte. Pred festivalom sa ujistite, že máte svoj QR kód s lístkom na festival stiahnutý", "success")
-    return redirect(url_for("user_bp.user_page_after_reg"))
+    return redirect(url_for("user_bp.user_page_after_reg"))'''
 
 
 @user_bp.route("/sign-in/", methods=['GET'])
@@ -164,11 +161,12 @@ def sign_out():
 
 @user_bp.route("/sign-up/", methods=['GET'])
 def sign_up_view():
-    tts = TicketType.query.all()
-    return render_template("user/sign_up.html", tts=tts)
+    flash("Online registrácie bola uzatvorená, ak chcete prísť na program, môžete sa registrovať na mieste",
+          "info")
+    return redirect(url_for("user_bp.sign_in_view"))
 
 
-@user_bp.route("/sign-up/", methods=['POST'])
+'''@user_bp.route("/sign-up/", methods=['POST'])
 def sign_up_fun():
     name = request.form["user-name"]
     age = request.form["user-age"]
@@ -231,7 +229,7 @@ def sign_up_fun():
     login_user(user)
 
     flash("Tvoj profil bol úspešne vytvorený", "success")
-    return redirect(url_for("send_reg_email", email=user.email))
+    return redirect(url_for("send_reg_email", email=user.email))'''
 
 
 @user_bp.route("send-message/", methods=['POST'])
