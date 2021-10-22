@@ -5,6 +5,11 @@
 {% endblock title %}
 
 
+{% block head %}
+    <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js"></script>
+{% endblock head %}
+
+
 {% block content %}
 
 
@@ -38,9 +43,21 @@
 
 </style>
 
+<div class="container d-flex justify-content-center" style="margin-bottom:10px;">
+
+                <div class="row">
+                    <canvas hidden="" id="qr-canvas"></canvas>
+                </div>
+
+        </div> 
+     <div>
 <div style="margin-top:30px;" class="d-flex justify-content-center">
-     <a href="{{ url_for('admin_bp.all_users') }}" type="button" class="btn btn-primary" >Zobraziť zoznam</a>
+     
+       <a href="{{ url_for('admin_bp.all_users') }}" type="button" class="btn btn-primary" >Zobraziť zoznam</a>
      <button type="button" style="margin-left:10px;" class="btn btn-primary" data-toggle="modal" data-target="#showOccupancy">Obsadenosť</button>
+     <a id="btn-scan-qr" style="margin-left:10px; color:white;" class="btn btn-info">Vyhľadať usera</a>
+     <button style="margin-left:10px;" id="btn-stop-qr" hidden="" class="btn btn-secondary" onclick="stopScan()">Stop</button>
+     </div>>
 </div>
 
 <section class="vh-100 gradient-custom" id="reg-section">
@@ -285,6 +302,88 @@
         return retVal;
     }
     document.getElementById("userPassword").value = generatePassword();
+
+    var qrcode = window.qrcode;
+
+    const video = document.createElement("video");
+    const canvasElement = document.getElementById("qr-canvas");
+    const canvas = canvasElement.getContext("2d");
+
+    const btnScanQR = document.getElementById("btn-scan-qr");
+    const btnStopQR = document.getElementById("btn-stop-qr");
+
+    let scanning = false;
+
+    qrcode.callback = (res) => {
+      if (res) {
+        
+        window.location.href = '/admin/user/user-page-with-hash/' + res + '/';
+
+        scanning = false;
+
+        video.srcObject.getTracks().forEach(track => {
+          track.stop();
+        });
+
+        btnScanQR.hidden = false;
+        btnStopQR.hidden = true;
+        canvasElement.hidden = true;
+
+      }
+    };
+
+
+    btnScanQR.onclick = () => {
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "environment" } })
+        .then(function(stream) {
+          scanning = true;
+          btnScanQR.hidden = true;
+          btnStopQR.hidden = false;
+          canvasElement.hidden = false;
+          video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+          video.srcObject = stream;
+          video.play();
+          tick();
+          scan();
+        });
+    };
+
+    function tick() {
+      canvasElement.height = video.videoHeight;
+      canvasElement.width = video.videoWidth;
+      canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+
+      scanning && requestAnimationFrame(tick);
+    }
+
+    function scan() {
+      try {
+        qrcode.decode();
+      } catch (e) {
+        setTimeout(scan, 300);
+      }
+    }
+
+    function stopScan() {
+        scanning = false;
+
+        video.srcObject.getTracks().forEach(track => {
+          track.stop();
+        });
+        btnStopQR.hidden = true;
+        btnScanQR.hidden = false;
+        canvasElement.hidden = true;
+    }
+
+    function scanAgain() {
+        navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "environment" } })
+        .then(function(stream) {
+          tick();
+          scan();
+        });
+    }
 </script>
 
 {% endblock content %}
