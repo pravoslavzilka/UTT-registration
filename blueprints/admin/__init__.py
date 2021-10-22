@@ -51,6 +51,16 @@ def tickets_scan(tt_id):
     return redirect(url_for("admin.check_tickets_view"))
 
 
+@admin_bp.route("/user/user-page-with-hash/<user_hash>/")
+@check_admin
+def find_admin_with_hash(user_hash):
+    user = User.query.filter(User.code == user_hash).first()
+    if user:
+        return redirect(url_for("admin_bp.admin_user_page", user_id=user.id))
+    flash("User nebol nájdenáý","danger")
+    return redirect(url_for("admin_bp.check_tickets_view"))
+
+
 @admin_bp.route("/user/<int:user_id>/")
 @check_admin
 def admin_user_page(user_id):

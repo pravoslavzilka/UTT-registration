@@ -101,9 +101,10 @@ def stats():
     all_users = len(User.query.all())
     arrived_users = len(User.query.filter(User.active_places).all())
     ttts = TicketTypeType.query.filter()
-
+    vac_users = len(User.query.filter(User.otp == "očkovaný proti ochoreniu COVID a budem to vedieť preukázať.").all())
+    vaccination = (vac_users/all_users)*100
     return render_template("head_admin/stats.html", non_confirm=non_confirm, all_users=all_users,
-                           arrived_users=arrived_users, ttts=ttts)
+                           arrived_users=arrived_users, ttts=ttts, vaccination=vaccination)
 
 
 @h_admin_bp.route("/stats/<int:piece_id>/")

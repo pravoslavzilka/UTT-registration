@@ -21,7 +21,7 @@
 
         @media only screen and (max-width: 700px) {
             .book-list {
-                margin-top:200px;
+
                 padding-top:15px;
             }
             .book-type-card {
@@ -75,42 +75,86 @@
             </div>
             <div id="book-list" class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
                 <div  id="book-list2">
-                    <input placeholder="Vyhľadať users" type="text" class="form-control" style="width:200px;" id="search-bar">
+                    <input placeholder="Vyhľadať users" type="text" class="form-control" style="width:200px;" id="live-search-box">
                 </div>
 
-                <table class="table" style="margin-top:20px;">
+                <div class="container" style="padding-top:10px;">
+                <table class="table" id="books-table">
                   <thead class="thead-dark">
                     <tr class="header">
                       <th scope="col">#</th>
                       <th scope="col">Meno</th>
-                      <th scope="col">Potvrdený</th>
-                        <th scope="col">Prišiel</th>
-                      <th scope="col">Odstrániť</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Vek</th>
+                      <th scope="col">OTP</th>
+                      <th scope="col">Zobraziť</th>
                     </tr>
                   </thead>
-                  <tbody id="listStudents">
+                  <tbody>
                     {% for ticket in tt.tickets %}
-                            <tr class="table">
+                        {% if ticket.user.active_places %}
+                            <tr class="table-success">
                               <th scope="row">{{ ticket.user.id }}</th>
-                              <td>{{ ticket.user.name }}</td>
-                              <td>{{ ticket.user.confirm }}</td>
+                              <td class="search-term">{{ ticket.user.name }}</td>
+                              <td>{{ ticket.user.email }}</td>
+                              <td>{{ ticket.user.age }}</td>
                               <td>
-                                  {% if tt in ticket.user.active_places %}
-                                    Áno
+                                  {% if ticket.user.otp == "očkovaný proti ochoreniu COVID a budem to vedieť preukázať."%}
+                                    O
+                                  {% elif ticket.user.otp == "testovaný na ochorenie COVID a budem to vedieť preukázať." %}
+                                    T
                                   {% else %}
-                                    Nie
+                                    P
                                   {% endif %}
                               </td>
                               <td>
-                                  <button> Odstrániť</button>
+                                  <a href="{{ url_for('admin_bp.admin_user_page', user_id=ticket.user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
                               </td>
                             </tr>
-
-
+                        {% elif ticket.user.confirm %}
+                            <tr class="table-warning">
+                              <th scope="row">{{ ticket.user.id }}</th>
+                              <td class="search-term">{{ ticket.user.name }}</td>
+                              <td>{{ ticket.user.email }}</td>
+                              <td>{{ ticket.user.age }}</td>
+                              <td>
+                                  {% if ticket.user.otp == "očkovaný proti ochoreniu COVID a budem to vedieť preukázať."%}
+                                    O
+                                  {% elif ticket.user.otp == "testovaný na ochorenie COVID a budem to vedieť preukázať." %}
+                                    T
+                                  {% else %}
+                                    P
+                                  {% endif %}
+                              </td>
+                              <td>
+                                  <a href="{{ url_for('admin_bp.admin_user_page', user_id=ticket.user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
+                              </td>
+                            </tr>
+                        {% else %}
+                            <tr class="table-danger">
+                              <th scope="row">{{ ticket.user.id }}</th>
+                              <td class="search-term">{{ ticket.user.name }}</td>
+                              <td>{{ ticket.user.email }}</td>
+                              <td>{{ ticket.user.age }}</td>
+                              <td>
+                                  {% if ticket.user.otp == "očkovaný proti ochoreniu COVID a budem to vedieť preukázať."%}
+                                    O
+                                  {% elif ticket.user.otp == "testovaný na ochorenie COVID a budem to vedieť preukázať." %}
+                                    T
+                                  {% else %}
+                                    P
+                                  {% endif %}
+                              </td>
+                              <td>
+                                  <a href="{{ url_for('admin_bp.admin_user_page', user_id=ticket.user.id) }}" class="btn btn-sm btn-info">Zobraziť</a>
+                              </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
 
                   </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
@@ -121,8 +165,15 @@
 
 
     <script>
+        $(document).ready(function(){
+          $("#live-search-box").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#books-table tr:not(.header)").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+        });
 
 
     </script>
-
 {% endblock content %}
